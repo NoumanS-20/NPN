@@ -31,6 +31,10 @@ class TrainedModel:
     candidates: dict[str, dict[str, float]] = field(default_factory=dict)
 
     def predict_proba(self, df: pd.DataFrame) -> np.ndarray:
+        # The fallback estimator scores by supplier rather than by feature, so it
+        # needs the original frame instead of the numeric feature matrix.
+        if getattr(self.estimator, "needs_raw_frame", False):
+            return self.estimator.predict_proba(df)[:, 1]
         matrix = df.reindex(columns=self.features).astype(float)
         return self.estimator.predict_proba(matrix)[:, 1]
 
