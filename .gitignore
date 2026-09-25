@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# Data & models (large, regenerated from source datasets)
+data/raw/
+data/interim/
+data/processed/
+*.db
+*.sqlite
+*.sqlite3
+models/*.joblib
+models/*.pkl
+models/*.json.gz
+
+# Secrets — never commit
+.env
+.env.*
+kaggle.json
+*.pem
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

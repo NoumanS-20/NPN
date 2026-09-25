@@ -1,0 +1,48 @@
+[project]
+name = "npn-scm"
+version = "0.1.0"
+description = "SupplyGuard (PR1) and TrendWear Planner (P2) — Cognizant NPN SCM Hackathon, Team Vortex5"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "pandas>=2.2",
+    "numpy>=1.26",
+    "scikit-learn>=1.5",
+    "xgboost>=2.1",
+    "lightgbm>=4.5",
+    "pulp>=2.9",
+    "sqlalchemy>=2.0",
+    "pydantic>=2.9",
+    "joblib>=1.4",
+    "openpyxl>=3.1",
+    "python-multipart>=0.0.9",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3",
+    "httpx>=0.27",
+    "ruff>=0.6",
+]
+
+[tool.setuptools.packages.find]
+where = ["packages"]
+include = ["pyshared*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "apps/pr1/tests", "apps/p2/tests"]
+pythonpath = [".", "packages", "apps/pr1/backend", "apps/p2/backend"]
+# Each app has a distinctly named package (supplyguard, trendwear) so both can be
+# imported in the same test session without shadowing each other.
+addopts = "-q"
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+exclude = [".venv", "data", "packages/web/vendor"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+ignore = ["B008"]
