@@ -20,13 +20,41 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pytest httpx ruff
+          pip install pytest httpx ruff kaggle
+
+      # The raw datasets are 212 MB and gitignored. Cache them on the dataset
+      # register, so a normal push restores them instead of re-downloading.
+      - name: Restore dataset cache
+        id: data-cache
+        uses: actions/cache@v4
+        with:
+          path: data/raw
+          key: raw-data-${{ hashFiles('scripts/fetch_data.py') }}
+
+      - name: Fetch datasets
+        if: steps.data-cache.outputs.cache-hit != 'true'
+        env:
+          KAGGLE_ACCESS_TOKEN: ${{ secrets.KAGGLE_ACCESS_TOKEN }}
+        run: |
+          if [ -z "$KAGGLE_ACCESS_TOKEN" ]; then
+            echo "No KAGGLE_ACCESS_TOKEN secret — data-backed tests will skip."
+            exit 0
+          fi
+          mkdir -p "$HOME/.kaggle"
+          printf '%s' "$KAGGLE_ACCESS_TOKEN" > "$HOME/.kaggle/access_token"
+          chmod 600 "$HOME/.kaggle/access_token"
+          python scripts/fetch_data.py
+
+      - name: Report dataset status
+        run: python scripts/fetch_data.py --check || echo "Datasets absent; data-backed tests will skip."
 
       - name: Lint
         run: ruff check .
 
+      # Tests that read raw data skip themselves when it is absent (conftest.py),
+      # so the suite is meaningful with or without Kaggle credentials.
       - name: Tests
-        run: pytest
+        run: pytest -q -rs
 
   javascript:
     runs-on: ubuntu-latest
@@ -40,13 +68,13 @@ jobs:
       - name: Install test dependencies
         run: npm install --no-save jsdom
 
-      # Node is used only to run the front-end tests. Nothing is bundled or built:
-      # the browser loads the ES modules directly.
+      # Node runs the front-end tests only. Nothing is bundled or built: the
+      # browser loads the ES modules directly.
       - name: Front-end tests
+        shell: bash
         run: |
           if compgen -G "packages/web/tests/*.test.js" > /dev/null; then
-            node --test packages/web/tests apps/*/web/tests 2>/dev/null || node --test packages/web/tests
+            node --test packages/web/tests
           else
             echo "No front-end tests yet."
           fi
-        shell: bash

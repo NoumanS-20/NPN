@@ -8,6 +8,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
 from scripts.fetch_data import DATASETS, expected_files, missing_files
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -35,8 +37,13 @@ def test_expected_files_are_listed_for_each_dataset() -> None:
         assert d.files, f"{d.slug} lists no files, so nothing can be verified"
 
 
+@pytest.mark.requires_data
 def test_the_current_checkout_has_every_expected_file() -> None:
-    """Fails loudly if someone deletes a dataset the build depends on."""
+    """Fails loudly if a dataset is deleted from a checkout that should have them.
+
+    Skipped where the data was never fetched — a fresh clone or a CI runner
+    without Kaggle credentials — because that is a missing download, not a bug.
+    """
     assert missing_files() == [], f"missing data files: {missing_files()}"
 
 
