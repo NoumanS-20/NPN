@@ -54,6 +54,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.middleware("http")
+async def revalidate_static(request, call_next):
+    """Ask browsers to revalidate the front-end files rather than trust a copy.
+
+    The pages are plain ES modules loaded by URL, and a browser will happily keep
+    an old one. That bit during development — an edited module kept serving its
+    previous version — and it would bite far harder on 28 September if we fix
+    something and a judge's open tab keeps the stale copy. The files are small
+    and served locally, so revalidation costs nothing.
+    """
+    response = await call_next(request)
+    path = request.url.path
+    if path.startswith(("/shared/", "/js/", "/css/", "/pages/")) or path == "/":
+        response.headers["Cache-Control"] = "no-cache, must-revalidate"
+    return response
+
+
 app.include_router(router)
 
 # The shared modules are mounted before the app's own files, because the root

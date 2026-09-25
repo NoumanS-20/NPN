@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en" data-app="pr1">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Allocation — SupplyGuard</title>
+  <meta name="description" content="Split each requirement across approved suppliers, trading invoice cost against predicted delivery risk.">
+  <link rel="stylesheet" href="/shared/tokens.css">
+  <link rel="stylesheet" href="/shared/base.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="rail"></aside>
+
+    <main class="main">
+      <header class="page-head">
+        <div>
+          <p class="eyebrow">Allocation</p>
+          <h1>Move the weights, watch the plan move</h1>
+          <p>
+            Risk is priced in money, so it competes with the invoice on the same terms. Raise the risk
+            weight and volume shifts off suppliers likely to deliver late — the bars below re-flow as
+            you drag.
+          </p>
+        </div>
+      </header>
+
+      <section class="panel">
+        <div class="panel__head">
+          <h2>What to plan</h2>
+          <span class="solve-time" id="solve-time"></span>
+        </div>
+        <div class="panel__body">
+          <div class="controls" style="margin-bottom: var(--space-5)">
+            <label class="field">
+              <span class="field__label">Plant</span>
+              <select id="plant"></select>
+            </label>
+            <label class="field">
+              <span class="field__label">Weeks ahead</span>
+              <select id="weeks">
+                <option value="1">1 week</option>
+                <option value="2" selected>2 weeks</option>
+                <option value="4">4 weeks</option>
+                <option value="8">8 weeks</option>
+              </select>
+            </label>
+            <label class="field">
+              <span class="field__label">
+                <span>Max share per supplier</span>
+                <span class="field__value" id="share-value">40%</span>
+              </span>
+              <input type="range" id="share" min="20" max="100" step="5" value="40">
+            </label>
+          </div>
+
+          <div class="controls">
+            <label class="field">
+              <span class="field__label">
+                <span>Cost</span><span class="field__value" id="w-cost-value">1.0</span>
+              </span>
+              <input type="range" id="w-cost" min="0" max="3" step="0.1" value="1">
+            </label>
+            <label class="field">
+              <span class="field__label">
+                <span>Delivery risk</span><span class="field__value" id="w-risk-value">1.0</span>
+              </span>
+              <input type="range" id="w-risk" min="0" max="3" step="0.1" value="1">
+            </label>
+            <label class="field">
+              <span class="field__label">
+                <span>Quality</span><span class="field__value" id="w-quality-value">1.0</span>
+              </span>
+              <input type="range" id="w-quality" min="0" max="3" step="0.1" value="1">
+            </label>
+            <div class="field">
+              <span class="field__label">Presets</span>
+              <div style="display:flex; gap:var(--space-2); flex-wrap:wrap">
+                <button type="button" data-preset="cost">Price only</button>
+                <button type="button" data-preset="balanced">Balanced</button>
+                <button type="button" data-preset="risk">Risk averse</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="stats" id="plan-stats" aria-label="Plan totals"></section>
+
+      <p class="small muted" id="change-note" role="status" aria-live="polite"></p>
+      <div id="relaxation-note"></div>
+
+      <section class="panel">
+        <div class="panel__head">
+          <h2>The split, requirement by requirement</h2>
+          <span class="small muted">Hover a segment for the supplier and the reason</span>
+        </div>
+        <div class="panel__body" id="splits">
+          <div class="loading">Planning…</div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel__head">
+          <h2>Against the alternatives</h2>
+          <span class="small muted">Negative is better</span>
+        </div>
+        <div class="panel__body" id="comparison">
+          <div class="loading">Comparing…</div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel__head">
+          <h2>Every line, and why</h2>
+        </div>
+        <div class="panel__body panel__body--flush" id="lines">
+          <div class="loading">Planning…</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="/js/allocate.js"></script>
+</body>
+</html>

@@ -34,6 +34,16 @@ app = FastAPI(
     version="0.1.0",
     summary="Integrated S&OP for TrendWear Apparel (P2)",
 )
+@app.middleware("http")
+async def revalidate_static(request, call_next):
+    """Ask browsers to revalidate the front-end files rather than trust a copy."""
+    response = await call_next(request)
+    path = request.url.path
+    if path.startswith(("/shared/", "/js/", "/css/", "/pages/")) or path == "/":
+        response.headers["Cache-Control"] = "no-cache, must-revalidate"
+    return response
+
+
 app.include_router(router)
 
 if SHARED_DIR.exists():

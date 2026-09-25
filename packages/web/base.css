@@ -148,6 +148,10 @@ a { color: var(--accent); }
   padding: var(--space-6) var(--space-6) var(--space-8);
   max-width: var(--content-max);
   width: 100%;
+  /* A grid item defaults to min-width: auto, so a wide table with nowrap cells
+   * pushes the whole page instead of scrolling inside its own panel. This is
+   * what let the allocation page overflow to 1360px on a 721px viewport. */
+  min-width: 0;
 }
 
 .page-head {
@@ -163,6 +167,7 @@ a { color: var(--accent); }
 /* ---------- Panels ---------- */
 
 .panel {
+  min-width: 0;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -222,7 +227,10 @@ a { color: var(--accent); }
 
 /* ---------- Tables ---------- */
 
-.table-wrap { overflow-x: auto; }
+.table-wrap {
+  overflow-x: auto;
+  max-width: 100%;
+}
 
 table.data {
   width: 100%;
@@ -472,7 +480,7 @@ button.primary:hover:not(:disabled) { filter: brightness(1.08); }
 /* ---------- Responsive ---------- */
 
 @media (max-width: 900px) {
-  .app { grid-template-columns: 1fr; }
+  .app { grid-template-columns: minmax(0, 1fr); }
 
   .rail {
     position: static;

@@ -8,7 +8,7 @@
  */
 
 import { get, post } from "/shared/api.js";
-import { splitBar, splitDetail } from "/shared/chart.js";
+import { splitBar, splitLegend } from "/shared/chart.js";
 import { delta, money, pct, seconds, truncate, units } from "/shared/format.js";
 
 const PREVIEW_LINES = 4;
@@ -79,6 +79,7 @@ async function renderPlan() {
     }
 
     mount.innerHTML = "";
+    mount.append(splitLegend());
     for (const [material, lines] of [...byRequirement].slice(0, PREVIEW_LINES)) {
       const total = lines.reduce((sum, line) => sum + line.qty, 0);
 

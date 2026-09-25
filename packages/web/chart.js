@@ -120,7 +120,7 @@ export function lineChart(canvas, { labels, series }) {
  * `lines` is the API's allocation lines. Segments are sorted largest first so
  * the eye lands on who carries the plan.
  */
-export function splitBar(mount, lines, { showLabels = true } = {}) {
+export function splitBar(mount, lines, { showLabels = true, legend = false } = {}) {
   mount.innerHTML = "";
   if (!lines || lines.length === 0) {
     mount.innerHTML = '<div class="empty">No allocation yet.</div>';
@@ -158,15 +158,22 @@ export function splitBar(mount, lines, { showLabels = true } = {}) {
 
   mount.append(bar);
 
-  const legend = document.createElement("div");
-  legend.className = "split-legend";
-  legend.innerHTML = `
+  // The legend is shown once per panel, not under every bar: repeated four
+  // times down a page it reads as clutter and buries the bars it explains.
+  if (!legend) return;
+  mount.append(splitLegend());
+}
+
+export function splitLegend() {
+  const element = document.createElement("div");
+  element.className = "split-legend";
+  element.innerHTML = `
     <span><i class="swatch swatch--low"></i> Delay risk under 25%</span>
     <span><i class="swatch swatch--medium"></i> 25–40%</span>
     <span><i class="swatch swatch--high"></i> Over 40%</span>
     <span><i class="swatch swatch--low" style="background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.4) 0 4px,transparent 4px 8px)"></i> Generated supplier</span>
   `;
-  mount.append(legend);
+  return element;
 }
 
 /** A compact supplier list under a split bar. */

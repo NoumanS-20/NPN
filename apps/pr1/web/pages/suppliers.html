@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en" data-app="pr1">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Suppliers — SupplyGuard</title>
+  <meta name="description" content="Compare every approved supplier on price, lead time, delivery record and predicted risk.">
+  <link rel="stylesheet" href="/shared/tokens.css">
+  <link rel="stylesheet" href="/shared/base.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="rail"></aside>
+
+    <main class="main">
+      <header class="page-head">
+        <div>
+          <p class="eyebrow">Supplier comparison</p>
+          <h1>Who can supply this, and how well</h1>
+          <p>
+            Every supplier approved for a material, with their measured delivery record and the risk
+            the model predicts from it. Suppliers we have never traded with show no performance
+            figures — an average would be a guess wearing a number's clothes.
+          </p>
+        </div>
+      </header>
+
+      <section class="panel">
+        <div class="panel__head">
+          <h2>Narrow the list</h2>
+          <span class="small muted" id="filter-summary"></span>
+        </div>
+        <div class="panel__body">
+          <div class="controls">
+            <label class="field">
+              <span class="field__label">Material</span>
+              <select id="filter-material"><option value="">All materials</option></select>
+            </label>
+            <label class="field">
+              <span class="field__label">Plant</span>
+              <select id="filter-plant"><option value="">All plants</option></select>
+            </label>
+            <label class="field">
+              <span class="field__label">Record</span>
+              <select id="filter-origin">
+                <option value="">Real and generated</option>
+                <option value="real">Real suppliers only</option>
+                <option value="synthetic">Generated only</option>
+              </select>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel__head">
+          <h2>Approved suppliers</h2>
+          <span class="small muted">Click a column heading to sort</span>
+        </div>
+        <div class="panel__body panel__body--flush" id="supplier-table">
+          <div class="loading">Loading suppliers…</div>
+        </div>
+      </section>
+
+      <p class="small faint" style="margin-top:var(--space-4)">
+        An asterisk on a risk figure means we have no trading history with that supplier, so the
+        number is the population average rather than a prediction about them.
+      </p>
+    </main>
+  </div>
+
+  <script type="module" src="/js/suppliers.js"></script>
+</body>
+</html>
