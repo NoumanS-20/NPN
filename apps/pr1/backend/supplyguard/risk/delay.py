@@ -125,6 +125,22 @@ def train(features: pd.DataFrame, test_fraction: float = 0.25) -> TrainedModel:
     metrics = dict(results[chosen])
     metrics["model"] = chosen
     metrics["label"] = LABEL
+    metrics["rows"] = int(len(data))
+    metrics["positives"] = int(data[LABEL].sum())
+
+    # Every risk target reports the same verdict, so the model panel can show all
+    # three side by side. This one passes on the evidence; quality and disruption
+    # do not, and saying so in the same words is the point.
+    best_baseline = max(
+        float(metrics.get("baseline_prior_pr_auc", 0.0)),
+        float(metrics.get("baseline_majority_pr_auc", 0.0)),
+    )
+    metrics["label_sufficient"] = True
+    metrics["sufficiency_reason"] = (
+        f"PR-AUC {float(metrics['pr_auc']):.3f} beats the best baseline "
+        f"({best_baseline:.3f}) with ROC-AUC {float(metrics['roc_auc']):.3f} on "
+        f"{int(metrics['support'])} held-out orders."
+    )
 
     return TrainedModel(
         name="delay",

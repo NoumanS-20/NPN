@@ -1,0 +1,78 @@
+/* SupplyGuard — PR1.
+ *
+ * Deep navy: procurement is the conservative half of the pair, and the accent
+ * should not compete with the risk ramp that carries the meaning.
+ */
+
+:root {
+  --accent: #1f3a6e;
+  --accent-soft: #eef2f9;
+  --accent-ink: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --accent: #7ba0e0;
+    --accent-soft: #1a2436;
+    --accent-ink: #0f1216;
+  }
+}
+
+/* The requirement being planned, above each split bar. */
+.req {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-2);
+}
+
+.req__name { font-weight: 550; font-size: var(--text-sm); }
+.req__meta { font-family: var(--font-numeric); font-size: var(--text-xs); color: var(--ink-faint); }
+
+.req + .req-bar { margin-bottom: var(--space-5); }
+
+.split-detail { margin-top: var(--space-3); display: grid; gap: 6px; }
+
+.split-detail__row {
+  display: grid;
+  grid-template-columns: 12px 1fr auto auto;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+}
+
+.split-detail__name { color: var(--ink-muted); }
+
+/* Weight sliders. */
+.controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-5);
+  align-items: end;
+}
+
+.compare-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-4);
+}
+
+.compare-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+}
+
+.compare-card h3 { font-size: var(--text-sm); margin-bottom: var(--space-3); }
+
+.compare-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 4px 0;
+  font-size: var(--text-sm);
+  border-bottom: 1px solid var(--line);
+}
+
+.compare-row:last-child { border-bottom: none; }

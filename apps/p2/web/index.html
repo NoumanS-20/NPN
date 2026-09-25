@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en" data-app="p2">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TrendWear Planner — integrated S&amp;OP</title>
+  <meta name="description" content="Reconcile the merchandising plan with what the factories can make, and time markdowns from in-season sell-through.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' rx='3' fill='%23A8620F'/><path d='M3 12l3-8 2 4 2-2 3 6' stroke='white' stroke-width='1.4' fill='none'/></svg>">
+  <link rel="stylesheet" href="/shared/tokens.css">
+  <link rel="stylesheet" href="/shared/base.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="rail">
+      <div class="brand">
+        <span class="brand__name">TrendWear Planner</span>
+        <span class="brand__case">P2 · Planning</span>
+      </div>
+
+      <nav class="nav" aria-label="Sections">
+        <a href="/" aria-current="page">Cockpit</a>
+        <a href="/pages/reconcile.html">Reconciliation</a>
+        <a href="/pages/merchandising.html">Merchandising</a>
+        <a href="/pages/production.html">Production</a>
+        <a href="/pages/logistics.html">Logistics</a>
+        <a href="/pages/inventory.html">Inventory</a>
+        <a href="/pages/markdown.html">Markdown</a>
+      </nav>
+
+      <div class="rail__foot">
+        <span id="context-line" class="skeleton" style="width: 80%"></span>
+        <span>Team Vortex5</span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="page-head">
+        <div>
+          <p class="eyebrow">Sales and operations planning</p>
+          <h1>One number the business commits to</h1>
+          <p>
+            Merchandising says what it intends to sell. The forecast says what the data expects.
+            The factories say what they can actually make. This is where those three meet, the gap
+            gets priced, and one plan is agreed.
+          </p>
+        </div>
+      </header>
+
+      <section class="stats" aria-label="Cycle status">
+        <div class="stat">
+          <div class="stat__label">S&amp;OP stage</div>
+          <div class="stat__value" style="font-size: var(--text-lg)">Demand review</div>
+          <div class="stat__note">Cycle 1 of 3 · 13-week horizon</div>
+        </div>
+        <div class="stat">
+          <div class="stat__label">Styles</div>
+          <div class="stat__value">—</div>
+          <div class="stat__note">Arrives with the demand module</div>
+        </div>
+        <div class="stat">
+          <div class="stat__label">Forecast error</div>
+          <div class="stat__value">—</div>
+          <div class="stat__note">WAPE against seasonal naive</div>
+        </div>
+        <div class="stat">
+          <div class="stat__label">Margin at risk</div>
+          <div class="stat__value">—</div>
+          <div class="stat__note">Styles tracking below sell-through target</div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel__head">
+          <h2>Under construction</h2>
+          <span class="badge badge--medium">Tasks 16–21</span>
+        </div>
+        <div class="panel__body">
+          <p class="muted">
+            The planning modules land in order: demand forecast and cold start, then inventory and
+            safety stock, production and fabric ordering, markdown timing, and finally the rolling
+            S&amp;OP cycle with its per-team views.
+          </p>
+          <p class="small faint" style="margin:0">
+            This application shares no data, no models and no runtime with SupplyGuard. A test in
+            the repository fails the build if either one ever imports the other.
+          </p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/shared/vendor/chart.min.js"></script>
+  <script type="module" src="/js/main.js"></script>
+</body>
+</html>

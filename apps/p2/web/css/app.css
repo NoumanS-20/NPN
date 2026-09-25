@@ -1,0 +1,40 @@
+/* TrendWear Planner — P2.
+ *
+ * Amber: apparel planning is the commercial half of the pair, and a warmer
+ * accent separates the two applications at a glance on a projector — which
+ * matters when they are demonstrated one after the other.
+ */
+
+:root {
+  --accent: #a8620f;
+  --accent-soft: #fbf1e5;
+  --accent-ink: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --accent: #e0a15c;
+    --accent-soft: #2a2117;
+    --accent-ink: #0f1216;
+  }
+}
+
+/* The four stages of the cycle, shown as a path rather than a list: the plan
+ * moves through them in order and cannot skip one. */
+.stages {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.stage {
+  flex: 1 1 160px;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+}
+
+.stage[data-state="done"] { border-color: var(--positive); color: var(--positive); }
+.stage[data-state="current"] { border-color: var(--accent); background: var(--accent-soft); }
+.stage[data-state="pending"] { color: var(--ink-faint); }

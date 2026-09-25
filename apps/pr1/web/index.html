@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en" data-app="pr1">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SupplyGuard — supplier allocation and delivery risk</title>
+  <meta name="description" content="Allocate procurement volume across approved suppliers, balancing cost against predicted delivery risk.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' rx='3' fill='%231F3A6E'/><path d='M4 8h8M4 5h5M4 11h6' stroke='white' stroke-width='1.4'/></svg>">
+  <link rel="stylesheet" href="/shared/tokens.css">
+  <link rel="stylesheet" href="/shared/base.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="rail">
+      <div class="brand">
+        <span class="brand__name">SupplyGuard</span>
+        <span class="brand__case">PR1 · Procurement</span>
+      </div>
+
+      <nav class="nav" aria-label="Sections">
+        <a href="/" aria-current="page">Overview</a>
+        <a href="/pages/suppliers.html">Suppliers</a>
+        <a href="/pages/allocate.html">Allocation</a>
+        <a href="/pages/risk-check.html">Pre-PO check</a>
+        <a href="/pages/scenarios.html">Scenarios</a>
+        <a href="/pages/models.html">Models</a>
+      </nav>
+
+      <div class="rail__foot">
+        <span id="context-line" class="skeleton" style="width: 80%"></span>
+        <span>Team Vortex5</span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="page-head">
+        <div>
+          <p class="eyebrow">Procurement planning</p>
+          <h1>Buy on total cost, not on price</h1>
+          <p>
+            Every supplier here has a measured delivery record. That record becomes a probability,
+            the probability is priced in money, and the price enters the allocation — so reliability
+            changes who gets the order rather than appearing in a report beside it.
+          </p>
+        </div>
+      </header>
+
+      <section class="stats" id="kpis" aria-label="Headline numbers">
+        <div class="stat"><div class="stat__label">Loading</div><div class="skeleton" style="margin-top:12px"></div></div>
+        <div class="stat"><div class="stat__label">Loading</div><div class="skeleton" style="margin-top:12px"></div></div>
+        <div class="stat"><div class="stat__label">Loading</div><div class="skeleton" style="margin-top:12px"></div></div>
+        <div class="stat"><div class="stat__label">Loading</div><div class="skeleton" style="margin-top:12px"></div></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel__head">
+          <div>
+            <h2>This month's plan</h2>
+            <p class="small muted" style="margin:4px 0 0">
+              Each bar is one material at one plant. Segment width is the supplier's share;
+              colour is their delay risk.
+            </p>
+          </div>
+          <span class="solve-time" id="plan-solve"></span>
+        </div>
+        <div class="panel__body" id="plan-preview">
+          <div class="loading">Planning…</div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel__head">
+          <h2>Against the alternatives</h2>
+          <a class="small" href="/pages/allocate.html">Open the planner →</a>
+        </div>
+        <div class="panel__body" id="baseline-preview">
+          <div class="loading">Comparing…</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/shared/vendor/chart.min.js"></script>
+  <script type="module" src="/js/main.js"></script>
+</body>
+</html>

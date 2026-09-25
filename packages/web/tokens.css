@@ -1,0 +1,144 @@
+/* Design tokens shared by both applications.
+ *
+ * The subject is procurement planning: ledgers, purchase-order lines, promised
+ * dates against actual ones. Two decisions follow from that and drive everything
+ * else here.
+ *
+ * 1. Quantities are set in a monospace face with tabular figures. In this domain
+ *    the numbers *are* the content, and a column of them has to be scannable
+ *    down the page, not just readable one at a time.
+ *
+ * 2. Risk has its own colour ramp — slate, amber, clay — separate from the
+ *    application accent. A supplier's reliability must never be confused with
+ *    which app you happen to be looking at.
+ *
+ * No web fonts. The demo on 28 September may run without a network, and a page
+ * that falls back to Times because a font did not load is worse than one that
+ * never asked.
+ */
+
+:root {
+  /* Surfaces */
+  --paper: #fbfbfa;
+  --surface: #ffffff;
+  --surface-sunken: #f4f5f7;
+  --line: #e4e5e9;
+  --line-strong: #cfd2d8;
+
+  /* Ink */
+  --ink: #14181f;
+  --ink-muted: #5b6270;
+  --ink-faint: #8b919d;
+
+  /* Accent — set per application in its own stylesheet */
+  --accent: #1f3a6e;
+  --accent-soft: #eef2f9;
+  --accent-ink: #ffffff;
+
+  /* Risk ramp. Deliberately not the accent: reliability is not branding. */
+  --risk-low: #64748b;
+  --risk-medium: #c2872b;
+  --risk-high: #a33a2b;
+  --risk-low-soft: #eef1f5;
+  --risk-medium-soft: #fbf3e4;
+  --risk-high-soft: #f8ecea;
+
+  /* Status */
+  --positive: #2f6b4f;
+  --positive-soft: #eaf3ee;
+  --negative: #a33a2b;
+  --negative-soft: #f8ecea;
+
+  /* Type */
+  --font-ui: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+  --font-numeric: ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono", Menlo, Consolas,
+    monospace;
+
+  --text-xs: 0.6875rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.9375rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 2rem;
+  --text-3xl: 2.75rem;
+
+  /* Space — a 4px grid, named by use rather than size */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-lg: 14px;
+
+  --shadow-sm: 0 1px 2px rgba(20, 24, 31, 0.06);
+  --shadow: 0 2px 8px rgba(20, 24, 31, 0.08), 0 1px 2px rgba(20, 24, 31, 0.04);
+
+  --rail-width: 232px;
+  --content-max: 1360px;
+
+  --transition: 180ms cubic-bezier(0.2, 0, 0.1, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0f1216;
+    --surface: #161a20;
+    --surface-sunken: #1c2129;
+    --line: #262c35;
+    --line-strong: #363d48;
+
+    --ink: #e8eaee;
+    --ink-muted: #9aa2b1;
+    --ink-faint: #6f7684;
+
+    --accent: #7ba0e0;
+    --accent-soft: #1a2436;
+    --accent-ink: #0f1216;
+
+    --risk-low: #94a3b8;
+    --risk-medium: #dda94e;
+    --risk-high: #d4705e;
+    --risk-low-soft: #1c2129;
+    --risk-medium-soft: #2a2317;
+    --risk-high-soft: #2b1c19;
+
+    --positive: #6cb894;
+    --positive-soft: #16251e;
+    --negative: #d4705e;
+    --negative-soft: #2b1c19;
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+  }
+}
+
+:root[data-theme="dark"] {
+  --paper: #0f1216;
+  --surface: #161a20;
+  --surface-sunken: #1c2129;
+  --line: #262c35;
+  --line-strong: #363d48;
+  --ink: #e8eaee;
+  --ink-muted: #9aa2b1;
+  --ink-faint: #6f7684;
+  --accent: #7ba0e0;
+  --accent-soft: #1a2436;
+  --accent-ink: #0f1216;
+  --risk-low: #94a3b8;
+  --risk-medium: #dda94e;
+  --risk-high: #d4705e;
+  --risk-low-soft: #1c2129;
+  --risk-medium-soft: #2a2317;
+  --risk-high-soft: #2b1c19;
+  --positive: #6cb894;
+  --positive-soft: #16251e;
+  --negative: #d4705e;
+  --negative-soft: #2b1c19;
+}

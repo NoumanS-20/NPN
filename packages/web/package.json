@@ -1,0 +1,9 @@
+{
+  "name": "@vortex5/web",
+  "private": true,
+  "type": "module",
+  "description": "Shared browser modules for SupplyGuard and TrendWear Planner. Loaded directly by the browser as ES modules; never bundled.",
+  "scripts": {
+    "test": "node --test tests/"
+  }
+}

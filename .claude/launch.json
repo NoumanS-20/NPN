@@ -1,0 +1,33 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "supplyguard",
+      "runtimeExecutable": ".venv/Scripts/python.exe",
+      "runtimeArgs": [
+        "-m",
+        "uvicorn",
+        "supplyguard.main:app",
+        "--port",
+        "8001",
+        "--app-dir",
+        "apps/pr1/backend"
+      ],
+      "port": 8001
+    },
+    {
+      "name": "trendwear",
+      "runtimeExecutable": ".venv/Scripts/python.exe",
+      "runtimeArgs": [
+        "-m",
+        "uvicorn",
+        "trendwear.main:app",
+        "--port",
+        "8002",
+        "--app-dir",
+        "apps/p2/backend"
+      ],
+      "port": 8002
+    }
+  ]
+}
