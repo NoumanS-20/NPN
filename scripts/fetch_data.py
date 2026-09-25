@@ -52,7 +52,7 @@ DATASETS: list[Dataset] = [
         licence="unknown on Kaggle; originally published by USAID",
         purpose=(
             "Primary PR1 dataset. 10,324 real purchase orders, 73 vendors across 88 "
-            "manufacturing sites, promised versus actual delivery dates, prices, freight and weight."
+            "manufacturing sites, promised versus actual delivery dates, prices, freight, weight."
         ),
     ),
     Dataset(
@@ -93,7 +93,7 @@ DATASETS: list[Dataset] = [
         purpose=(
             "Google Cloud's public SAP demonstration data (cloud-training-demos."
             "SAP_REPLICATED_DATA). Genuine SAP table structures, simulated contents. Used for the "
-            "2,590-vendor catalogue and to show ERP-shaped ingestion. Never quoted as real behaviour."
+            "2,590-vendor catalogue and to show ERP-shaped ingestion. Never quoted as real."
         ),
     ),
     Dataset(
@@ -165,7 +165,9 @@ def print_register() -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--check", action="store_true", help="report missing files, download nothing")
+    parser.add_argument(
+        "--check", action="store_true", help="report missing files, download nothing"
+    )
     parser.add_argument("--force", action="store_true", help="re-download everything")
     parser.add_argument("--list", action="store_true", help="print the dataset register")
     args = parser.parse_args(argv)
