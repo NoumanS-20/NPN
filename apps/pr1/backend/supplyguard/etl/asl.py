@@ -31,11 +31,12 @@ from supplyguard.config import SEED
 # suppliers from the same product group fill the gap.
 MIN_SUPPLIERS_PER_MATERIAL = 6
 
-# Approved capacity must comfortably exceed the peak weekly requirement, or the
-# optimiser is handed an infeasible problem. 1.5x leaves room for the minimum
-# order quantities and the concentration cap to bind without making demand
-# impossible to meet — which is exactly the tension the use case is about.
-CAPACITY_COVERAGE_TARGET = 1.5
+# Approved capacity must exceed the peak weekly requirement *after* the
+# concentration cap is applied, because that is the constraint the optimiser
+# actually faces: each supplier can contribute at most `share_cap` of a line.
+# Sizing against raw capacity instead left 54 of 192 lines infeasible.
+CAPACITY_COVERAGE_TARGET = 1.3
+ASSUMED_SHARE_CAP = 0.4
 
 
 def _traded_pairs(orders: pd.DataFrame, plant_ids: set[str]) -> pd.DataFrame:
@@ -61,7 +62,7 @@ def build_asl(
     """Return one row per approved supplier, material and plant."""
     rng = np.random.default_rng(seed)
 
-    from supplyguard.etl.plants import attach_plant_id
+    from supplyguard.etl.plants import attach_plant_id, plant_shares
 
     tagged = attach_plant_id(orders, plants)
     plant_ids = set(plants["plant_id"])
@@ -86,7 +87,14 @@ def build_asl(
         for group, rows in generated.groupby("product_group")
     }
 
-    capacity = suppliers.set_index("supplier_id")["capacity_per_week"].to_dict()
+    shares = plant_shares(orders, plants)
+    supplier_capacity = suppliers.set_index("supplier_id")["capacity_per_week"].to_dict()
+
+    def usable(supplier_id: str, material: str, plant: str, need: float) -> float:
+        """What this supplier could contribute to one line, after plant scaling and the cap."""
+        network = float(supplier_capacity.get(supplier_id, 0.0))
+        share = float(shares.get((material, plant), 1.0 / max(len(plants), 1)))
+        return min(network * share, need * ASSUMED_SHARE_CAP)
     peak_need = (
         requirements.groupby(["material_id", "plant_id"])["required_qty"].max().to_dict()
         if requirements is not None
@@ -103,7 +111,7 @@ def build_asl(
             continue
 
         need = peak_need.get((material, plant), 0.0)
-        available = sum(capacity.get(s, 0.0) for s in approved)
+        available = sum(usable(s, material, plant, need) for s in approved)
 
         # Qualify suppliers until there is both a real choice and enough capacity
         # to serve the peak week. A procurement team does the same thing: when the
@@ -116,7 +124,7 @@ def build_asl(
             if enough_choice and enough_capacity:
                 break
             picked.append(supplier_id)
-            available += capacity.get(supplier_id, 0.0)
+            available += usable(supplier_id, material, plant, need)
 
         extra.extend(
             {
@@ -150,3 +158,89 @@ def summarise(asl: pd.DataFrame) -> dict[str, float | int]:
         "median_suppliers_per_pair": float(per_pair.median()),
         "max_suppliers_per_pair": int(per_pair.max()),
     }
+
+
+def ensure_coverage(
+    orders: pd.DataFrame,
+    suppliers: pd.DataFrame,
+    plants: pd.DataFrame,
+    requirements: pd.DataFrame,
+    asl: pd.DataFrame,
+    build_offers_fn,
+    target: float = 1.4,
+    max_passes: int = 4,
+    seed: int = SEED,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Qualify more suppliers until the offer table can actually meet demand.
+
+    The approved list is built before offers exist, so it sizes coverage from
+    network-wide capacity. Offers then scale that capacity down to the plant
+    being served, and a pair that looked comfortable can turn out short — eight
+    of 192 requirement lines had approved capacity of 7,149 units against a
+    requirement of 8,567.
+
+    Rather than let the optimiser return "infeasible" for a data reason, we do
+    what a buyer would: qualify additional suppliers from the same product group,
+    largest capacity first, and re-check. Returns the extended list and the
+    offers built from it.
+    """
+    offers = build_offers_fn(
+        orders, suppliers, asl, plants=plants, requirements=requirements, seed=seed
+    )
+
+    material_group = (
+        orders.groupby("item")["product_group"].agg(lambda s: s.value_counts().index[0]).to_dict()
+    )
+    # Largest capacity first: qualifying four tiny suppliers barely moves
+    # coverage, which is how one pair sat at 0.92 through four passes.
+    generated = suppliers[suppliers["origin"] == "synthetic"].sort_values(
+        "capacity_per_week", ascending=False
+    )
+    by_group = {g: rows["supplier_id"].tolist() for g, rows in generated.groupby("product_group")}
+    peak = requirements.groupby(["material_id", "plant_id"])["required_qty"].max()
+    earliest = orders["promised_date"].min()
+
+    for _ in range(max_passes):
+        capacity = offers.groupby(["material_id", "plant_id"])["capacity_per_week"].sum()
+        short = [
+            (material, plant)
+            for (material, plant), need in peak.items()
+            if capacity.get((material, plant), 0.0) < need * target
+        ]
+        if not short:
+            break
+
+        additions: list[dict[str, object]] = []
+        for material, plant in short:
+            approved = set(
+                asl.loc[
+                    (asl["material_id"] == material) & (asl["plant_id"] == plant), "supplier_id"
+                ]
+            )
+            group = material_group.get(material, "")
+            pool = [s for s in by_group.get(group, []) if s not in approved]
+            if not pool:
+                continue
+            picked = pool[: min(6, len(pool))]
+            additions.extend(
+                {
+                    "supplier_id": supplier_id,
+                    "material_id": material,
+                    "plant_id": plant,
+                    "orders_placed": 0,
+                    "qualification": "qualified",
+                    "approved_since": earliest,
+                }
+                for supplier_id in picked
+            )
+
+        if not additions:
+            break
+
+        asl = pd.concat([asl, pd.DataFrame(additions)], ignore_index=True, sort=False)
+        asl = asl.drop_duplicates(subset=["supplier_id", "material_id", "plant_id"])
+        offers = build_offers_fn(
+            orders, suppliers, asl, plants=plants, requirements=requirements, seed=seed
+        )
+
+    return asl.reset_index(drop=True), offers

@@ -10,7 +10,7 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 from supplyguard.config import RAW_SAP_DIR, RAW_SCMS, SEED, TARGET_SUPPLIER_COUNT, TOP_PLANTS
-from supplyguard.etl.asl import build_asl
+from supplyguard.etl.asl import build_asl, ensure_coverage
 from supplyguard.etl.offers import OFFER_COLUMNS, build_offers, coverage
 from supplyguard.etl.plants import derive_plants
 from supplyguard.etl.requirements import build_plan
@@ -31,7 +31,9 @@ def pipeline() -> dict[str, pd.DataFrame]:
     plants = derive_plants(orders, top_n=TOP_PLANTS)
     requirements = build_plan(orders, plants, horizon_weeks=8)
     asl = build_asl(orders, suppliers, plants, requirements=requirements, seed=SEED)
-    offers = build_offers(orders, suppliers, asl, seed=SEED)
+    asl, offers = ensure_coverage(
+        orders, suppliers, plants, requirements, asl, build_offers
+    )
     return {
         "orders": orders, "suppliers": suppliers, "plants": plants,
         "requirements": requirements, "asl": asl, "offers": offers,
@@ -63,9 +65,13 @@ def test_minimum_order_never_exceeds_a_fifth_of_capacity(pipeline: dict[str, pd.
 
 
 def test_every_requirement_can_be_met(pipeline: dict[str, pd.DataFrame]) -> None:
-    """An infeasible problem demonstrates nothing."""
+    """An infeasible problem demonstrates nothing.
+
+    Coverage must clear the requirement with room for the concentration cap to
+    bind, which is why the approved list is topped up after offers are built.
+    """
     cov = coverage(pipeline["offers"], pipeline["requirements"])
-    assert (cov["coverage_ratio"] >= 1.0).all()
+    assert (cov["coverage_ratio"] >= 1.3).all()
 
 
 def test_capacity_is_not_so_large_that_it_stops_mattering(
@@ -79,8 +85,8 @@ def test_capacity_is_not_so_large_that_it_stops_mattering(
     Capacity is now a sustainable weekly rate per supplier and material.
     """
     cov = coverage(pipeline["offers"], pipeline["requirements"])
-    assert cov["coverage_ratio"].median() < 50
-    assert cov["largest_share"].median() < 20
+    assert cov["coverage_ratio"].median() < 20
+    assert cov["largest_share"].median() < 10
 
 
 def test_prices_differ_within_a_material(pipeline: dict[str, pd.DataFrame]) -> None:
@@ -102,5 +108,8 @@ def test_generated_suppliers_get_offers_in_the_right_range(
 
 
 def test_build_is_deterministic(pipeline: dict[str, pd.DataFrame]) -> None:
-    again = build_offers(pipeline["orders"], pipeline["suppliers"], pipeline["asl"], seed=SEED)
+    again = build_offers(
+        pipeline["orders"], pipeline["suppliers"], pipeline["asl"],
+        plants=pipeline["plants"], requirements=pipeline["requirements"], seed=SEED,
+    )
     pd.testing.assert_frame_equal(pipeline["offers"], again)

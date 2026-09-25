@@ -26,6 +26,7 @@ import numpy as np
 import pandas as pd
 
 from supplyguard.config import SEED
+from supplyguard.etl.plants import plant_shares
 
 OFFER_COLUMNS: set[str] = {
     "supplier_id", "material_id", "plant_id", "unit_price", "lead_days",
@@ -65,10 +66,19 @@ def _traded_offers(orders: pd.DataFrame) -> pd.DataFrame:
     return stats.reset_index().rename(columns={"item": "material_id"})
 
 
+# When a supplier is newly qualified for a material, it is qualified because we
+# need volume from it. A supplier who could only ever supply a rounding error is
+# not worth approving, so a qualified offer is sized to be able to cover at least
+# this share of the line on its own.
+MIN_QUALIFIED_SHARE = 0.25
+
+
 def build_offers(
     orders: pd.DataFrame,
     suppliers: pd.DataFrame,
     asl: pd.DataFrame,
+    plants: pd.DataFrame | None = None,
+    requirements: pd.DataFrame | None = None,
     seed: int = SEED,
 ) -> pd.DataFrame:
     """One row per approved supplier, material and plant."""
@@ -117,20 +127,51 @@ def build_offers(
         offers[column] = offers[column].fillna(offers["material_id"].map(source))
         offers[column] = offers[column].fillna(float(traded[column].median()))
 
+    # Scale network capacity down to the plant this offer serves.
+    if plants is not None:
+        shares = plant_shares(orders, plants)
+        keys = pd.MultiIndex.from_arrays([offers["material_id"], offers["plant_id"]])
+        offers["plant_share"] = shares.reindex(keys).to_numpy()
+        offers["plant_share"] = offers["plant_share"].fillna(1.0 / max(len(plants), 1))
+        offers["capacity_per_week"] = offers["capacity_per_week"] * offers["plant_share"]
+    else:
+        offers["plant_share"] = 1.0
+
+    # A qualified supplier must be able to carry a useful share of the line.
+    # Sampling from the material median alone produced suppliers with 66 units of
+    # capacity against a 3,112-unit requirement: approving 24 of them still left
+    # the line short, because the median traded offer for that material is tiny
+    # next to what a plant actually needs.
+    if requirements is not None and len(requirements):
+        peak = requirements.groupby(["material_id", "plant_id"])["required_qty"].max()
+        keys = pd.MultiIndex.from_arrays([offers["material_id"], offers["plant_id"]])
+        line_need = pd.Series(peak.reindex(keys).to_numpy(), index=offers.index)
+        floor = line_need * MIN_QUALIFIED_SHARE
+        newly_qualified = (offers["qualification"] == "qualified") & floor.notna()
+        offers.loc[newly_qualified, "capacity_per_week"] = np.maximum(
+            offers.loc[newly_qualified, "capacity_per_week"], floor[newly_qualified]
+        )
+
     offers["unit_price"] = offers["unit_price"].clip(lower=0.01).round(4)
     offers["capacity_per_week"] = offers["capacity_per_week"].clip(lower=1).round()
-    # A minimum order above a fifth of weekly capacity would exclude the supplier
-    # from most weeks, which is a modelling artefact rather than a real term.
-    offers["moq"] = np.minimum(
-        offers["moq"].fillna(0).clip(lower=0), offers["capacity_per_week"] * 0.2
-    ).round()
+
+    # Minimum order quantity, expressed on the same weekly basis as capacity:
+    # a tenth of what the supplier normally runs in a week.
+    #
+    # Not the 10th percentile of historical order quantities, which is what an
+    # earlier version used. Those are bulk shipments — a quarter's volume in one
+    # delivery — so the resulting minimums ran to thousands of units against
+    # weekly requirements of a few hundred. Every supplier was then excluded for
+    # being unable to meet its own minimum inside the concentration cap, and the
+    # whole plan came back infeasible. The same lumpiness that broke capacity.
+    offers["moq"] = (offers["capacity_per_week"] * 0.10).clip(lower=1).round()
     offers["lead_days"] = offers["lead_days"].fillna(float(suppliers["avg_lead_days"].median()))
     offers["shipments"] = offers["shipments"].fillna(0).astype(int)
 
     columns = [
         "supplier_id", "material_id", "plant_id", "unit_price", "lead_days",
-        "p75_lead_days", "capacity_per_week", "moq", "shipments", "on_time_rate",
-        "qualification", "origin",
+        "p75_lead_days", "capacity_per_week", "moq", "plant_share", "shipments",
+        "on_time_rate", "qualification", "origin",
     ]
     return (
         offers[columns]

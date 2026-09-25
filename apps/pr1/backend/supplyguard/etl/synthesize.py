@@ -111,8 +111,21 @@ def attach_commercial_terms(
     group_total = out.groupby("product_group")["historical_volume"].transform("sum")
     share = (volume / group_total.replace(0, np.nan)).fillna(1.0 / len(out))
 
-    out["contract_min_share"] = (share * 0.25).clip(0.0, 0.20).round(4)
-    out["contract_max_share"] = (share * 2.0).clip(0.05, 0.60).round(4)
+    out["contract_min_share"] = (share * 0.25).clip(0.0, 0.10).round(4)
+    # The ceiling must never be tighter than the concentration cap the planner
+    # works to, or the two rules contradict each other and no plan exists.
+    #
+    # Two earlier versions got this wrong. Taken straight from historical share,
+    # ceilings averaged 5% and capped total available volume at about 30% of
+    # demand. Raised to a 25% floor, they still bound tighter than the 40%
+    # concentration cap: on one line two substantial suppliers were held to 116
+    # units each against a requirement of 464, and the plan was infeasible for a
+    # reason that had nothing to do with sourcing.
+    #
+    # The floor now sits above the default cap. Single sourcing is prevented by
+    # the concentration cap and the minimum supplier count, which is where that
+    # rule belongs.
+    out["contract_max_share"] = (share * 2.0).clip(0.50, 0.80).round(4)
     # Keep the band ordered even where a supplier's share is tiny.
     out["contract_max_share"] = np.maximum(
         out["contract_max_share"], out["contract_min_share"] + 0.05

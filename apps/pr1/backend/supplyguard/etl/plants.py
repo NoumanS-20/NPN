@@ -50,3 +50,18 @@ def attach_plant_id(orders: pd.DataFrame, plants: pd.DataFrame) -> pd.DataFrame:
     out = orders.copy()
     out["plant_id"] = out["country"].map(lookup)
     return out
+
+
+def plant_shares(orders: pd.DataFrame, plants: pd.DataFrame) -> pd.Series:
+    """Each plant's share of a material's total demand.
+
+    Capacity is measured across the whole network; a requirement belongs to one
+    plant. Both the approved-supplier list and the offer table scale by this, so
+    they agree on how much a supplier can actually deliver to a given site.
+    """
+    tagged = attach_plant_id(orders, plants).dropna(subset=["plant_id"])
+    by_pair = tagged.groupby(["item", "plant_id"])["qty"].sum()
+    by_material = tagged.groupby("item")["qty"].sum()
+    share = (by_pair / by_material).rename("plant_share")
+    share.index = share.index.set_names(["material_id", "plant_id"])
+    return share

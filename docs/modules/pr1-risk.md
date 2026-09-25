@@ -79,3 +79,59 @@ than useful signal, and we could not explain a single prediction to a buyer.
 
 **Is 0.347 PR-AUC good?** Against a 14% base rate and a 0.264 baseline, it is a real but modest improvement.
 We would rather report that than dress it up.
+
+---
+
+# Quality and disruption — the labels did not hold up
+
+The team agreed on 25 September not to promise three models until the labels were verified. They were
+verified, and **two of the three did not survive**. This section is the evidence, and it is worth presenting
+rather than hiding: knowing when not to ship a model is a result.
+
+## What we measured
+
+| Target | Rows | Positives | PR-AUC | Best baseline | ROC-AUC | Verdict |
+|---|---|---|---|---|---|---|
+| Delivery delay | 10,324 | 1,186 (11.5%) | **0.347** | 0.264 | **0.825** | **Ships** |
+| Quality event | 517 | 71 (13.7%) | 0.164 | **0.256** | 0.592 | Falls back |
+| Disruption | 777 | 136 (17.5%) | 0.192 | 0.193 | **0.482** | Falls back |
+
+- **Quality**: the model scores *below* the supplier's own trailing rate. A planner with a spreadsheet does
+  better, so shipping the model would make the system worse and harder to explain.
+- **Disruption**: ROC-AUC of 0.482 is worse than a coin toss. The reason is visible in the data — across the
+  five suppliers in that file, disruption rates run 16.3%, 16.8%, 16.9%, 17.3%, 19.9%. There is essentially
+  nothing to separate them, so there is nothing for a model to learn.
+
+## The sufficiency gate
+
+A label supports a model only when, on the held-out later period, it beats the better of its two baselines by
+at least **0.03 PR-AUC** and reaches **ROC-AUC ≥ 0.58**. Otherwise the module records the failure and the
+estimator falls back to the **supplier's observed rate**.
+
+The gate is deliberately strict. The failure it prevents — a confident-looking number with nothing behind it,
+in front of a panel who will ask — is far worse than the failure it causes, which is a simpler input that is
+plainly labelled.
+
+The fallback is not a placeholder. Using a supplier's observed defect and disruption rate is what procurement
+teams already do, it still feeds the optimiser's quality penalty, and it makes no claim to be a prediction.
+
+## What we say on stage
+
+> "We built three risk targets. One is a real model: delivery delay, ROC-AUC 0.825, beating the
+> supplier-history baseline. The other two labels did not support a model — quality scored below its own
+> baseline, and disruption came out worse than chance because the five suppliers in that file are
+> indistinguishable. So for those we use the observed rate and label it as such. We would rather show you
+> the gate that caught it than a number we could not defend."
+
+## Likely questions
+
+**Why not tune harder until they work?** Because the honest constraint is data, not effort. 517 rows with 71
+positives across 44 suppliers cannot support a model that generalises, and tuning against the test set until
+it passes is how you produce a number that fails in production.
+
+**Would more data fix it?** Probably, for quality: the signal by component category (11.5% to 19.3%) suggests
+something real, just not enough of it. For disruption, the five suppliers genuinely behave alike in this file.
+
+**Does the optimiser suffer?** No. It consumes a probability either way. The delay model's calibrated
+prediction and the observed quality rate both enter the objective; only one of them claims to be a
+prediction.
