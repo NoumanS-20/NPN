@@ -56,6 +56,10 @@ needed because "order nothing, or at least 500" is not a straight line.
 high-risk volume from 5.3% to 1.4%.* That is the whole argument for risk-aware sourcing in one line, and it
 comes out of the model rather than a slide.
 
+Note what this table is and is not: it compares **our plan against itself** under three weightings, which is
+what the sliders do on screen. The comparison against how buying is actually done — cheapest-first, equal
+split and last year's mix — is in `pr1-baselines.md`, and it includes the case where we cost slightly more.
+
 ## When the rules contradict each other
 
 Three limits apply to every supplier at once — capacity, the concentration cap and the contract ceiling — and

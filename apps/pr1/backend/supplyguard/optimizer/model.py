@@ -47,6 +47,7 @@ import time
 import pandas as pd
 import pulp
 
+from supplyguard.config import LEAD_TIME_ALLOWANCE_WEEKS
 from supplyguard.optimizer.types import (
     AllocationLine,
     AllocationRequest,
@@ -93,9 +94,15 @@ def _eligible(
 
     # Risk-adjusted lead time: a supplier that is usually late is treated as
     # slower than its quoted lead time, which is what a buyer does in their head.
-    weeks_available = requirement.week + request.lead_time_buffer_weeks
+    #
+    # The allowance is how far ahead procurement plans. An earlier version added
+    # 52 weeks of slack to avoid infeasibility, which meant lead time never bound
+    # and the lead-time shock scenario moved nothing at all on screen.
+    weeks_available = (
+        LEAD_TIME_ALLOWANCE_WEEKS + requirement.week + request.lead_time_buffer_weeks
+    )
     adjusted_weeks = rows["p75_lead_days"].fillna(rows["lead_days"]) / 7.0
-    rows = rows[adjusted_weeks <= weeks_available + 52]
+    rows = rows[adjusted_weeks <= weeks_available]
 
     allowed = requirement.quantity * share_cap
     return rows[rows["moq"].fillna(0.0) <= allowed]

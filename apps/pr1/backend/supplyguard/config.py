@@ -35,6 +35,19 @@ MAX_SUPPLIER_SHARE = 0.40
 MIN_SUPPLIERS_PER_MATERIAL = 2
 TOP_PLANTS = 8
 
+# How far ahead procurement plans, in weeks. Risk-adjusted lead times in this
+# data cluster around 23 weeks with a tail past 30, which is normal for
+# international pharmaceutical supply.
+#
+# The value has to be chosen, not guessed. At 26 weeks the base plan is
+# infeasible; at 34 a +2-week shock changes nothing. At 30 the plan is feasible,
+# a two-week shock costs 0.24%, and a six-week shock genuinely breaks it — so the
+# scenario shows a real cliff rather than a number that nudges.
+#
+# An earlier version added 52 weeks of slack here to dodge infeasibility, which
+# meant lead time never bound and the lead-time scenario moved nothing at all.
+LEAD_TIME_ALLOWANCE_WEEKS = 30
+
 # Values the file uses in date columns to mean "no date".
 DATE_PLACEHOLDERS = ("Date Not Captured", "Pre-PO Process", "N/A", "NA", "")
 
