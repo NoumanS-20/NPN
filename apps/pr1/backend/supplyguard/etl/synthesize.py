@@ -31,7 +31,7 @@ import pandas as pd
 from supplyguard.config import SEED
 
 TERMS_COLUMNS: set[str] = {
-    "moq", "capacity_per_period", "contract_min_share", "contract_max_share",
+    "moq", "capacity_per_week", "contract_min_share", "contract_max_share",
 }
 
 # Name parts for generated suppliers. Deliberately plain: a generated supplier
@@ -51,12 +51,19 @@ _SITE = (
 )
 
 
-def _period_volume(orders: pd.DataFrame) -> pd.Series:
-    """Units per supplier per active quarter — the basis for capacity and MOQ."""
+def _weekly_volume(orders: pd.DataFrame) -> pd.Series:
+    """Units per supplier per active week — the basis for weekly capacity.
+
+    Planning happens by week, so capacity has to be a weekly number. An earlier
+    version used quarterly volume, which left every supplier with 245x to
+    11,844x the weekly requirement: capacity, minimum orders and contracts never
+    bound, and the optimiser degenerated into "pick the cheapest". Weekly p95
+    puts the median supplier at about 2,000 units a week against typical
+    requirement lines of 3,700, so the constraints do real work.
+    """
     working = orders.dropna(subset=["promised_date"]).copy()
-    working["period"] = working["promised_date"].dt.to_period("Q")
-    per_period = working.groupby(["supplier_id", "period"])["qty"].sum()
-    return per_period
+    working["week"] = working["promised_date"].dt.to_period("W")
+    return working.groupby(["supplier_id", "week"])["qty"].sum()
 
 
 def attach_commercial_terms(
@@ -66,9 +73,9 @@ def attach_commercial_terms(
 ) -> pd.DataFrame:
     """Add MOQ, capacity and contract bands, derived from trading history.
 
-    * **capacity_per_period** — the 95th percentile of that supplier's quarterly
-      volume, scaled by 1.2 to allow modest growth. A supplier with no history
-      inherits their product group's median.
+    * **capacity_per_week** — the 95th percentile of that supplier's weekly
+      shipped volume, scaled by 1.5 to allow headroom. A supplier with no history
+      of their own inherits their product group's median.
     * **moq** — the 10th percentile of their order quantities, rounded, and never
       above a fifth of capacity, so a minimum never makes a supplier unusable.
     * **contract bands** — built around each supplier's historical share of their
@@ -78,27 +85,27 @@ def attach_commercial_terms(
     rng = np.random.default_rng(seed)
     out = catalogue.copy()
 
-    per_period = _period_volume(orders)
-    capacity = per_period.groupby("supplier_id").quantile(0.95) * 1.2
+    per_week = _weekly_volume(orders)
+    capacity = per_week.groupby("supplier_id").quantile(0.95) * 1.5
     moq = orders.groupby("supplier_id")["qty"].quantile(0.10)
 
-    out["capacity_per_period"] = out["supplier_id"].map(capacity)
+    out["capacity_per_week"] = out["supplier_id"].map(capacity)
     out["moq"] = out["supplier_id"].map(moq)
 
     # Suppliers with no history of their own take their group's middle.
-    group_capacity = out.groupby("product_group")["capacity_per_period"].transform("median")
-    global_capacity = float(out["capacity_per_period"].median(skipna=True))
-    out["capacity_per_period"] = out["capacity_per_period"].fillna(group_capacity).fillna(
+    group_capacity = out.groupby("product_group")["capacity_per_week"].transform("median")
+    global_capacity = float(out["capacity_per_week"].median(skipna=True))
+    out["capacity_per_week"] = out["capacity_per_week"].fillna(group_capacity).fillna(
         global_capacity
     )
     group_moq = out.groupby("product_group")["moq"].transform("median")
     out["moq"] = out["moq"].fillna(group_moq).fillna(float(out["moq"].median(skipna=True)))
 
-    out["capacity_per_period"] = out["capacity_per_period"].clip(lower=100).round()
+    out["capacity_per_week"] = out["capacity_per_week"].clip(lower=100).round()
     out["moq"] = out["moq"].fillna(0).clip(lower=0).round()
     # A minimum order larger than a fifth of capacity would exclude the supplier
     # from most plans, which is a modelling artefact rather than a real term.
-    out["moq"] = np.minimum(out["moq"], out["capacity_per_period"] * 0.2).round()
+    out["moq"] = np.minimum(out["moq"], out["capacity_per_week"] * 0.2).round()
 
     volume = out["historical_volume"].fillna(0.0)
     group_total = out.groupby("product_group")["historical_volume"].transform("sum")
@@ -244,7 +251,7 @@ def summarise(expanded: pd.DataFrame) -> dict[str, float | int]:
         "real": int(len(real)),
         "generated": int(len(generated)),
         "median_moq": float(expanded["moq"].median()),
-        "median_capacity_per_period": float(expanded["capacity_per_period"].median()),
+        "median_capacity_per_week": float(expanded["capacity_per_week"].median()),
         "median_contract_max_share": float(expanded["contract_max_share"].median()),
         "real_median_on_time": round(float(real["on_time_rate"].median()), 4),
         "generated_median_on_time": round(float(generated["on_time_rate"].median()), 4)

@@ -88,7 +88,7 @@ def test_every_supplier_ends_up_in_a_real_product_group(expanded: pd.DataFrame) 
 def test_commercial_terms_are_attached_to_everyone(expanded: pd.DataFrame) -> None:
     assert set(expanded.columns) >= TERMS_COLUMNS
     assert (expanded["moq"] >= 0).all()
-    assert (expanded["capacity_per_period"] > expanded["moq"]).all()
+    assert (expanded["capacity_per_week"] > expanded["moq"]).all()
     assert (expanded["contract_min_share"] <= expanded["contract_max_share"]).all()
     assert expanded["contract_max_share"].between(0, 1).all()
 
@@ -101,7 +101,7 @@ def test_terms_are_derived_from_a_supplier_own_history(
     traded = with_terms[with_terms["has_history"] & (with_terms["orders"] >= 5)]
     big = traded.nlargest(20, "historical_volume")
     small = traded.nsmallest(20, "historical_volume")
-    assert big["capacity_per_period"].median() > small["capacity_per_period"].median()
+    assert big["capacity_per_week"].median() > small["capacity_per_week"].median()
 
 
 def test_capacity_can_cover_demand_in_aggregate(expanded: pd.DataFrame) -> None:
@@ -109,4 +109,4 @@ def test_capacity_can_cover_demand_in_aggregate(expanded: pd.DataFrame) -> None:
     for group, rows in expanded.groupby("product_group"):
         if group == "UNCLASSIFIED":
             continue
-        assert rows["capacity_per_period"].sum() > 0
+        assert rows["capacity_per_week"].sum() > 0

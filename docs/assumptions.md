@@ -16,8 +16,10 @@ problem larger but never make a score look better.
 | `supplier_id` | Slug of vendor + manufacturing site | A buyer sources from a site, not a company. Performance belongs to the factory |
 | `on_time_rate` | 1 − (late orders ÷ orders), per supplier | The use case requires delivery performance in sourcing decisions |
 | `avg_lead_days`, `p75_lead_days` | Median and 75th percentile of promised lead time, with a three-level fallback: supplier's own record (3+ observations, 79 suppliers) → product-group median (138) → global median (0). `lead_days_source` records which | Only 38% of orders carry a PO date. Product groups differ materially: ARV ~130 days, HRDT 92, MRDT 63 |
-| `capacity_per_period` | 95th percentile of the supplier's quarterly volume × 1.2 | Not recorded anywhere; a required constraint. Allows modest growth beyond what they have shipped |
-| `moq` | 10th percentile of their order quantities, capped at 20% of capacity | Not recorded; a required constraint. The cap stops a minimum order making a supplier unusable |
+| `capacity_per_week` (supplier level) | 95th percentile of the supplier's weekly volume × 1.5 | Not recorded anywhere; a required constraint |
+| `offers.capacity_per_week` (supplier **and material**) | Everything that supplier shipped of that material ÷ weeks in the record × 2.0 — a sustainable rate, not a peak week | What the optimiser actually uses. Peak-week measures gave 60–2,285× the weekly requirement, so no constraint ever bound |
+| `moq` | 10th percentile of order quantities for that supplier and material, capped at 20% of weekly capacity | Not recorded; a required constraint. The cap stops a minimum order making a supplier unusable |
+| `offers.unit_price` | Median unit price that supplier charged for that material; for qualified suppliers, the material's median shifted by that supplier's own price position, ±8% | Price per supplier-material is what the objective minimises |
 | `contract_min_share` | ¼ of their historical share of the product group, capped at 20% | Contract commitments are a required input and no contracts exist in the data |
 | `contract_max_share` | 2× their historical share, floor 5%, ceiling 60%, ±5% jitter | The 60% ceiling means no contract can mandate single sourcing |
 | `plants` | The eight highest-volume delivery locations | The use case asks for demand by SKU and plant |

@@ -57,12 +57,14 @@ def test_requirements_are_marked_as_derived(plan: pd.DataFrame) -> None:
     assert set(plan["source"].unique()) == {"derived"}
 
 
-def test_plan_totals_track_historical_consumption(orders: pd.DataFrame, plants: pd.DataFrame) -> None:
+def test_plan_totals_track_historical_consumption(
+    orders: pd.DataFrame, plants: pd.DataFrame
+) -> None:
     """A year of plan should resemble a year of history, not an invented number."""
     yearly = build_plan(orders, plants, horizon_weeks=52, seasonal=False)
     planned_weekly = yearly["required_qty"].sum() / 52
 
-    covered = orders[orders["plant_id"].isin(plants["plant_id"])] if "plant_id" in orders else orders
+    covered = orders
     weeks = (covered["promised_date"].max() - covered["promised_date"].min()).days / 7
     historical_weekly = covered["qty"].sum() / weeks
 
