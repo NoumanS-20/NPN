@@ -70,11 +70,10 @@ jobs:
 
       # Node runs the front-end tests only. Nothing is bundled or built: the
       # browser loads the ES modules directly.
+      # `node --test` with a directory argument makes Node resolve the path as a
+      # module and fail. Run it from the package with no argument instead, which
+      # is Node's own recursive discovery and is the command the README and the
+      # runbook document — so CI and a laptop run exactly the same thing.
       - name: Front-end tests
-        shell: bash
-        run: |
-          if compgen -G "packages/web/tests/*.test.js" > /dev/null; then
-            node --test packages/web/tests
-          else
-            echo "No front-end tests yet."
-          fi
+        working-directory: packages/web
+        run: node --test
