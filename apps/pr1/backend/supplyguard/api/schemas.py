@@ -76,6 +76,7 @@ class ComparisonOut(BaseModel):
     plan: AllocationOut
     baselines: dict[str, AllocationOut]
     comparison: dict[str, dict]
+    narrative: str
 
 
 class ScoreOrderIn(BaseModel):

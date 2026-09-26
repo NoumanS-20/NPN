@@ -38,6 +38,15 @@ test("missing values show an em dash rather than a zero", () => {
   }
 });
 
+test("formatters survive being handed a row as their second argument", () => {
+  // The table calls format(value, record). Passing money or pct by name then
+  // puts a row object into the currency or digits slot; both must cope.
+  const row = { style_id: "A", units: 10 };
+  assert.equal(money(1234, row), "$1,234");
+  assert.equal(pct(0.5, row), "50.0%");
+  assert.equal(delta(1.25, row), "+1.3%");
+});
+
 test("risk bands match the optimiser's thresholds", () => {
   assert.equal(riskBand(0.1), "low");
   assert.equal(riskBand(0.25), "medium");

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en" data-app="pr1">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Models — SupplyGuard</title>
+  <meta name="description" content="What each risk model scores, what it was compared against, and which labels did not support a model at all.">
+  <link rel="stylesheet" href="/shared/tokens.css">
+  <link rel="stylesheet" href="/shared/base.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="rail"></aside>
+
+    <main class="main">
+      <header class="page-head">
+        <div>
+          <p class="eyebrow">Model performance</p>
+          <h1>Three risk targets. One supports a model.</h1>
+          <p>
+            Each target is scored on orders the model never saw, against two baselines: predicting the
+            overall rate, and assuming a supplier repeats its own history. A label only earns a model
+            if it beats both by a margin that is not noise. Two of these did not.
+          </p>
+        </div>
+      </header>
+
+      <section id="models">
+        <div class="loading">Loading measurements…</div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="/js/models.js"></script>
+</body>
+</html>

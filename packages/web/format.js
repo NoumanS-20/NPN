@@ -10,12 +10,21 @@
 
 const MISSING = "—";
 
-/** Money, no decimals — procurement deals in whole currency units. */
-export function money(value, currency = "USD") {
+/**
+ * Money, no decimals — these businesses deal in whole currency units.
+ *
+ * The second argument is guarded because these formatters are handed straight
+ * to the table, which calls them as `format(value, row)`. Passing `money` by
+ * name then put a row object into the currency slot and threw "Invalid currency
+ * code" across three screens. A formatter has to survive its own calling
+ * convention.
+ */
+export function money(value, currency) {
   if (value == null || Number.isNaN(value)) return MISSING;
+  const code = typeof currency === "string" ? currency : "USD";
   return new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency,
+    currency: code,
     maximumFractionDigits: 0,
   }).format(value);
 }
@@ -37,14 +46,16 @@ export function units(value) {
 /** A rate held as 0–1, shown as a percentage. */
 export function pct(value, digits = 1) {
   if (value == null || Number.isNaN(value)) return MISSING;
-  return `${(value * 100).toFixed(digits)}%`;
+  const places = Number.isInteger(digits) ? digits : 1;
+  return `${(value * 100).toFixed(places)}%`;
 }
 
 /** A change already expressed in percent, with its sign kept. */
 export function delta(value, digits = 1) {
   if (value == null || Number.isNaN(value)) return MISSING;
+  const places = Number.isInteger(digits) ? digits : 1;
   const sign = value > 0 ? "+" : "";
-  return `${sign}${value.toFixed(digits)}%`;
+  return `${sign}${value.toFixed(places)}%`;
 }
 
 export function days(value) {

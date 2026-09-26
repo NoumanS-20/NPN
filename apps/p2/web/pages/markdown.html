@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en" data-app="p2">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Markdown — TrendWear Planner</title>
+  <meta name="description" content="When to mark a style down and by how much, from in-season sell-through.">
+  <link rel="stylesheet" href="/shared/tokens.css">
+  <link rel="stylesheet" href="/shared/base.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="rail"></aside>
+
+    <main class="main">
+      <header class="page-head">
+        <div>
+          <p class="eyebrow">In-season</p>
+          <h1>Discount the ones that need it</h1>
+          <p>A markdown is triggered by sell-through against target, not by a date in the calendar. A style tracking to clear anyway is left alone, because discounting it gives away margin on units that would have sold.</p>
+        </div>
+      </header>
+
+      <section class="stats" id="md-stats"></section>
+
+      <section class="panel">
+        <div class="panel__head"><h2>What the elasticity is, and where it came from</h2></div>
+        <div class="panel__body" id="md-elasticity"><div class="loading">Loading…</div></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel__head"><h2>Recommendations</h2></div>
+        <div class="panel__body panel__body--flush" id="md-table"><div class="loading">Loading…</div></div>
+      </section>
+
+
+    </main>
+  </div>
+
+  <script src="/shared/vendor/chart.min.js"></script>
+  <script type="module" src="/js/markdown.js"></script>
+</body>
+</html>

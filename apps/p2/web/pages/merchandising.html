@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en" data-app="p2">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Merchandising — TrendWear Planner</title>
+  <meta name="description" content="The demand view: forecast accuracy, the catalogue, and where revenue comes from.">
+  <link rel="stylesheet" href="/shared/tokens.css">
+  <link rel="stylesheet" href="/shared/base.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="rail"></aside>
+
+    <main class="main">
+      <header class="page-head">
+        <div>
+          <p class="eyebrow">Demand review</p>
+          <h1>What we expect to sell</h1>
+          <p>The demand side of the cycle. Forecast accuracy is measured on the twenty real styles only — the generated ones make the catalogue realistic, and must not make the score look better.</p>
+        </div>
+      </header>
+
+      <section class="stats" id="merch-stats"></section>
+
+      <section class="panel">
+        <div class="panel__head"><h2>Revenue by category</h2></div>
+        <div class="panel__body" id="merch-chart"><div class="loading">Loading…</div></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel__head"><h2>The catalogue</h2><span class="small muted">Generated styles are marked</span></div>
+        <div class="panel__body panel__body--flush" id="merch-table"><div class="loading">Loading…</div></div>
+      </section>
+
+
+    </main>
+  </div>
+
+  <script src="/shared/vendor/chart.min.js"></script>
+  <script type="module" src="/js/merchandising.js"></script>
+</body>
+</html>

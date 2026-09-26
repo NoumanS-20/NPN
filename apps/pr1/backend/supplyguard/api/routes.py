@@ -24,6 +24,7 @@ from supplyguard.api.schemas import (
     ScoreOrderOut,
 )
 from supplyguard.api.state import state
+from supplyguard.narrative.explain import explain_allocation, explain_scenario
 from supplyguard.optimizer.baselines import compare, run_all
 from supplyguard.optimizer.model import solve
 from supplyguard.optimizer.types import AllocationRequest, Requirement, Weights
@@ -171,10 +172,12 @@ def allocate_compare(body: AllocateIn) -> dict[str, Any]:
     request = _request_from(body)
     plan = solve(request, state.context.offers, state.context.risk)
     baselines = run_all(request, state.context.offers, state.context.orders, state.context.risk)
+    comparison = compare(plan, baselines)
     return {
         "plan": _to_out(plan),
         "baselines": {name: _to_out(result) for name, result in baselines.items()},
-        "comparison": compare(plan, baselines),
+        "comparison": comparison,
+        "narrative": explain_allocation(plan, comparison),
     }
 
 
@@ -232,9 +235,15 @@ def run_scenario_endpoint(key: str, body: ScenarioIn) -> dict[str, Any]:
         raise HTTPException(400, str(error)) from error
 
     return {
-        "key": result.key, "name": result.name, "parameters": result.parameters,
-        "narrative": result.narrative, "deltas": result.deltas,
-        "before": _to_out(result.before), "after": _to_out(result.after),
+        "key": result.key,
+        "name": result.name,
+        "parameters": result.parameters,
+        "narrative": explain_scenario(
+            result.name, result.deltas, result.after.is_optimal, result.after.message
+        ),
+        "deltas": result.deltas,
+        "before": _to_out(result.before),
+        "after": _to_out(result.after),
     }
 
 

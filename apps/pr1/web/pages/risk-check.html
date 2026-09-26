@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en" data-app="pr1">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pre-PO check — SupplyGuard</title>
+  <meta name="description" content="Score a draft purchase order for delivery and quality risk before it is released.">
+  <link rel="stylesheet" href="/shared/tokens.css">
+  <link rel="stylesheet" href="/shared/base.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="rail"></aside>
+
+    <main class="main">
+      <header class="page-head">
+        <div>
+          <p class="eyebrow">Before you release</p>
+          <h1>Check an order before it becomes a commitment</h1>
+          <p>
+            The use case asks for delivery delays to be predicted <em>before</em> the purchase order goes
+            out. Pick a supplier, a material and a quantity, and the model scores it — with the reasons,
+            so a buyer can weigh them against what they already know.
+          </p>
+        </div>
+      </header>
+
+      <section class="panel">
+        <div class="panel__head"><h2>Draft order</h2></div>
+        <div class="panel__body">
+          <div class="controls">
+            <label class="field">
+              <span class="field__label">Material</span>
+              <select id="material"></select>
+            </label>
+            <label class="field">
+              <span class="field__label">Plant</span>
+              <select id="plant"><option value="">Any plant</option></select>
+            </label>
+            <label class="field">
+              <span class="field__label">Supplier</span>
+              <select id="supplier"></select>
+            </label>
+            <label class="field">
+              <span class="field__label">Quantity</span>
+              <input type="number" id="quantity" value="5000" min="1" step="100">
+            </label>
+          </div>
+          <div style="margin-top: var(--space-5)">
+            <button type="button" class="primary" id="check">Score this order</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="verdict"></section>
+
+      <section class="panel">
+        <div class="panel__head"><h2>What drives the score</h2></div>
+        <div class="panel__body" id="factors">
+          <div class="empty">Score an order to see the reasoning.</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="/js/risk-check.js"></script>
+</body>
+</html>

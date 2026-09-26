@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en" data-app="p2">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Logistics — TrendWear Planner</title>
+  <meta name="description" content="Warehouse-to-store transit times, and the week stock actually reaches a shop floor.">
+  <link rel="stylesheet" href="/shared/tokens.css">
+  <link rel="stylesheet" href="/shared/base.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="rail"></aside>
+
+    <main class="main">
+      <header class="page-head">
+        <div>
+          <p class="eyebrow">Distribution</p>
+          <h1>Made is not the same as on sale</h1>
+          <p>A unit made in week six is not a unit selling in week six. Every lane carries a transit time and a cost per unit, and that is what turns a production date into a shelf date.</p>
+        </div>
+      </header>
+
+      <section class="stats" id="log-stats"></section>
+
+      <section class="panel">
+        <div class="panel__head"><h2>Lanes</h2></div>
+        <div class="panel__body panel__body--flush" id="log-lanes"><div class="loading">Loading…</div></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel__head"><h2>Units reaching stores by week</h2></div>
+        <div class="panel__body" id="log-chart"><div class="loading">Loading…</div></div>
+      </section>
+
+
+    </main>
+  </div>
+
+  <script src="/shared/vendor/chart.min.js"></script>
+  <script type="module" src="/js/logistics.js"></script>
+</body>
+</html>

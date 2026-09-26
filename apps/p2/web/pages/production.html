@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en" data-app="p2">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Production — TrendWear Planner</title>
+  <meta name="description" content="Capacity use, shortfalls, and the fabric orders that have to be placed.">
+  <link rel="stylesheet" href="/shared/tokens.css">
+  <link rel="stylesheet" href="/shared/base.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="rail"></aside>
+
+    <main class="main">
+      <header class="page-head">
+        <div>
+          <p class="eyebrow">Supply review</p>
+          <h1>What the plants can actually make</h1>
+          <p>Production is planned against each plant's weekly capacity and against the fabric that has arrived. Fabric is ordered from a single named source under a minimum order quantity and a five-week lead time — choosing between suppliers is PR1's job, not this one's.</p>
+        </div>
+      </header>
+
+      <section class="stats" id="prod-stats"></section>
+
+      <section class="panel">
+        <div class="panel__head"><h2>Capacity use by week</h2></div>
+        <div class="panel__body" id="prod-chart"><div class="loading">Loading…</div></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel__head"><h2>Where demand cannot be met</h2></div>
+        <div class="panel__body panel__body--flush" id="prod-shortfalls"><div class="loading">Loading…</div></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel__head"><h2>Fabric orders</h2><span class="small muted">A negative week means the order was already due</span></div>
+        <div class="panel__body panel__body--flush" id="fabric-table"><div class="loading">Loading…</div></div>
+      </section>
+
+
+    </main>
+  </div>
+
+  <script src="/shared/vendor/chart.min.js"></script>
+  <script type="module" src="/js/production.js"></script>
+</body>
+</html>

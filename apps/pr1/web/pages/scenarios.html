@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en" data-app="pr1">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scenarios — SupplyGuard</title>
+  <meta name="description" content="Re-plan under a supplier outage, a demand spike, a lead-time shock or a price shock.">
+  <link rel="stylesheet" href="/shared/tokens.css">
+  <link rel="stylesheet" href="/shared/base.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="rail"></aside>
+
+    <main class="main">
+      <header class="page-head">
+        <div>
+          <p class="eyebrow">What if</p>
+          <h1>Break the plan on purpose</h1>
+          <p>
+            Each scenario changes the inputs and re-solves with the same optimiser, so the before and
+            after are genuinely comparable. Where the approved base cannot absorb a disruption, the plan
+            says so — knowing where the cliff is <em>is</em> the analysis.
+          </p>
+        </div>
+      </header>
+
+      <section class="panel">
+        <div class="panel__head">
+          <h2>Choose a disruption</h2>
+          <span class="solve-time" id="scenario-timing"></span>
+        </div>
+        <div class="panel__body">
+          <div class="controls">
+            <label class="field">
+              <span class="field__label">Scenario</span>
+              <select id="scenario"></select>
+            </label>
+            <label class="field" id="param-field">
+              <span class="field__label"><span id="param-label">Amount</span></span>
+              <input type="number" id="param" value="30" step="1">
+            </label>
+            <label class="field">
+              <span class="field__label">Plant</span>
+              <select id="plant"></select>
+            </label>
+            <div class="field">
+              <span class="field__label">&nbsp;</span>
+              <button type="button" class="primary" id="run">Run the scenario</button>
+            </div>
+          </div>
+          <p class="small muted" id="scenario-description" style="margin-top:var(--space-4)"></p>
+        </div>
+      </section>
+
+      <section id="narrative"></section>
+      <section class="stats" id="deltas"></section>
+
+      <section class="panel">
+        <div class="panel__head"><h2>Before and after</h2></div>
+        <div class="panel__body" id="compare-splits">
+          <div class="empty">Run a scenario to compare the plans.</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="/js/scenarios.js"></script>
+</body>
+</html>

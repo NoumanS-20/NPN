@@ -12,27 +12,7 @@
 </head>
 <body>
   <div class="app">
-    <aside class="rail">
-      <div class="brand">
-        <span class="brand__name">TrendWear Planner</span>
-        <span class="brand__case">P2 · Planning</span>
-      </div>
-
-      <nav class="nav" aria-label="Sections">
-        <a href="/" aria-current="page">Cockpit</a>
-        <a href="/pages/reconcile.html">Reconciliation</a>
-        <a href="/pages/merchandising.html">Merchandising</a>
-        <a href="/pages/production.html">Production</a>
-        <a href="/pages/logistics.html">Logistics</a>
-        <a href="/pages/inventory.html">Inventory</a>
-        <a href="/pages/markdown.html">Markdown</a>
-      </nav>
-
-      <div class="rail__foot">
-        <span id="context-line" class="skeleton" style="width: 80%"></span>
-        <span>Team Vortex5</span>
-      </div>
-    </aside>
+    <aside class="rail"></aside>
 
     <main class="main">
       <header class="page-head">
@@ -47,45 +27,32 @@
         </div>
       </header>
 
-      <section class="stats" aria-label="Cycle status">
-        <div class="stat">
-          <div class="stat__label">S&amp;OP stage</div>
-          <div class="stat__value" style="font-size: var(--text-lg)">Demand review</div>
-          <div class="stat__note">Cycle 1 of 3 · 13-week horizon</div>
+      <section class="panel">
+        <div class="panel__head">
+          <h2>Where this month's cycle stands</h2>
+          <span class="small muted">Rolling, 13-week horizon</span>
         </div>
-        <div class="stat">
-          <div class="stat__label">Styles</div>
-          <div class="stat__value">—</div>
-          <div class="stat__note">Arrives with the demand module</div>
-        </div>
-        <div class="stat">
-          <div class="stat__label">Forecast error</div>
-          <div class="stat__value">—</div>
-          <div class="stat__note">WAPE against seasonal naive</div>
-        </div>
-        <div class="stat">
-          <div class="stat__label">Margin at risk</div>
-          <div class="stat__value">—</div>
-          <div class="stat__note">Styles tracking below sell-through target</div>
-        </div>
+        <div class="panel__body" id="cycle"><div class="loading">Loading…</div></div>
+      </section>
+
+      <section class="stats" id="kpis" aria-label="Headline numbers">
+        <div class="stat"><div class="stat__label">Loading</div><div class="skeleton" style="margin-top:12px"></div></div>
+        <div class="stat"><div class="stat__label">Loading</div><div class="skeleton" style="margin-top:12px"></div></div>
+        <div class="stat"><div class="stat__label">Loading</div><div class="skeleton" style="margin-top:12px"></div></div>
+        <div class="stat"><div class="stat__label">Loading</div><div class="skeleton" style="margin-top:12px"></div></div>
       </section>
 
       <section class="panel">
         <div class="panel__head">
-          <h2>Under construction</h2>
-          <span class="badge badge--medium">Tasks 16–21</span>
+          <h2>Ambition against capability</h2>
+          <a class="small" href="/pages/reconcile.html">Open the reconciliation →</a>
         </div>
-        <div class="panel__body">
-          <p class="muted">
-            The planning modules land in order: demand forecast and cold start, then inventory and
-            safety stock, production and fabric ordering, markdown timing, and finally the rolling
-            S&amp;OP cycle with its per-team views.
-          </p>
-          <p class="small faint" style="margin:0">
-            This application shares no data, no models and no runtime with SupplyGuard. A test in
-            the repository fails the build if either one ever imports the other.
-          </p>
-        </div>
+        <div class="panel__body" id="gap-chart"><div class="loading">Loading…</div></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel__head"><h2>The plan in money</h2></div>
+        <div class="panel__body" id="money"><div class="loading">Loading…</div></div>
       </section>
     </main>
   </div>

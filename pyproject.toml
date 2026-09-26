@@ -35,7 +35,9 @@ testpaths = ["tests", "apps/pr1/tests", "apps/p2/tests"]
 pythonpath = [".", "packages", "apps/pr1/backend", "apps/p2/backend"]
 # Each app has a distinctly named package (supplyguard, trendwear) so both can be
 # imported in the same test session without shadowing each other.
-addopts = "-q"
+# importlib mode lets both applications have a tests/test_api.py without the
+# module names colliding, which the default prepend mode cannot.
+addopts = "-q --import-mode=importlib"
 filterwarnings = ["ignore::DeprecationWarning"]
 
 [tool.ruff]

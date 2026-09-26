@@ -4,35 +4,46 @@ Run locally:
 
     uvicorn trendwear.main:app --port 8002 --reload
 
-The planning modules arrive in Tasks 16 to 21. This shell serves the interface
-and a health endpoint so the two applications can be deployed and demonstrated
-independently from the start — they share no data, no models and no runtime.
+The planning context loads at startup from the cache written by
+``python -m trendwear.pipeline``. Nothing is trained while the server is up.
+
+This application shares no data, no models and no runtime with SupplyGuard. A
+test in the repository fails the build if either one imports the other.
 """
 
 from __future__ import annotations
 
+from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import APIRouter, FastAPI
+from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
+from pyshared.logging import get_logger
 
+from trendwear.api.routes import router
+from trendwear.api.state import state
 from trendwear.config import APP_NAME
+
+log = get_logger(__name__)
 
 WEB_DIR = Path(__file__).resolve().parents[2] / "web"
 SHARED_DIR = Path(__file__).resolve().parents[4] / "packages" / "web"
 
-router = APIRouter(prefix="/api")
-
-
-@router.get("/health")
-def health() -> dict[str, object]:
-    return {"status": "ok", "app": APP_NAME, "loaded": False}
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    log.info("loading the planning context")
+    state.load()
+    log.info("warming the headline figures")
+    state.warm()
+    log.info("%s ready", APP_NAME)
+    yield
 
 
 app = FastAPI(
     title=f"{APP_NAME} API",
     version="0.1.0",
     summary="Integrated S&OP for TrendWear Apparel (P2)",
+    lifespan=lifespan,
 )
 @app.middleware("http")
 async def revalidate_static(request, call_next):

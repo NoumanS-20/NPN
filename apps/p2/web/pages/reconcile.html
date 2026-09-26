@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en" data-app="p2">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reconciliation — TrendWear Planner</title>
+  <meta name="description" content="Compare the merchandising plan, the statistical forecast and what the plants can make.">
+  <link rel="stylesheet" href="/shared/tokens.css">
+  <link rel="stylesheet" href="/shared/base.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="rail"></aside>
+
+    <main class="main">
+      <header class="page-head">
+        <div>
+          <p class="eyebrow">Pre-S&amp;OP</p>
+          <h1>Three plans, one agreed number</h1>
+          <p>Merchandising says what it intends to sell. The forecast says what the data expects. The plants say what they can make. The gap between the first and the third is the conversation this cycle exists to have.</p>
+        </div>
+      </header>
+
+      <section class="stats" id="recon-stats"></section>
+
+      <section class="panel">
+        <div class="panel__head"><h2>Demand against supply, week by week</h2></div>
+        <div class="panel__body" id="recon-chart"><div class="loading">Loading…</div></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel__head"><h2>Where the gap is biggest</h2><span class="small muted">By money, not units</span></div>
+        <div class="panel__body panel__body--flush" id="recon-gaps"><div class="loading">Loading…</div></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel__head"><h2>Every style and week</h2></div>
+        <div class="panel__body panel__body--flush" id="recon-table"><div class="loading">Loading…</div></div>
+      </section>
+
+
+    </main>
+  </div>
+
+  <script src="/shared/vendor/chart.min.js"></script>
+  <script type="module" src="/js/reconcile.js"></script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en" data-app="p2">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Inventory — TrendWear Planner</title>
+  <meta name="description" content="Buffer stock per style, reorder points, and stock-out or overstock warnings.">
+  <link rel="stylesheet" href="/shared/tokens.css">
+  <link rel="stylesheet" href="/shared/base.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="rail"></aside>
+
+    <main class="main">
+      <header class="page-head">
+        <div>
+          <p class="eyebrow">Safety stock</p>
+          <h1>The price of being wrong</h1>
+          <p>Safety stock is sized from how wrong the forecast usually is for that style, and how long replenishment takes. A style we predict well carries less buffer; a style we predict badly carries more. The buffer is then checked against what actually happened.</p>
+        </div>
+      </header>
+
+      <section class="stats" id="inv-stats"></section>
+
+      <section class="panel">
+        <div class="panel__head"><h2>Does the buffer hold?</h2></div>
+        <div class="panel__body" id="inv-backtest"><div class="loading">Loading…</div></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel__head"><h2>Every style</h2><span class="small muted">Sorted by how far below target</span></div>
+        <div class="panel__body panel__body--flush" id="inv-table"><div class="loading">Loading…</div></div>
+      </section>
+
+
+    </main>
+  </div>
+
+  <script src="/shared/vendor/chart.min.js"></script>
+  <script type="module" src="/js/inventory.js"></script>
+</body>
+</html>
