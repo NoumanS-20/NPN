@@ -23,7 +23,7 @@ Three numbers exist for every style and week, and they rarely agree:
 | **Constrained supply** | What the plants can actually make, after capacity and fabric lead times ([p2-planning.md](p2-planning.md)) | **652,062** units |
 
 **The gap between the first and the third is the conversation the cycle exists to
-have:** 100,618 units, **5.57 million** in revenue, across 20 styles that are
+have:** 100,618 units, **5.57 million** in revenue, across 34 styles that are
 short.
 
 The **consensus** is the single number the business commits to:

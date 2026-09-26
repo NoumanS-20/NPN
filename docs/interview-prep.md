@@ -124,8 +124,8 @@ history and compare cumulative realised cost, not one slice.
 
 ### PR1 — Scenarios
 
-**What.** Five: demand spike, supplier outage, price shock, lead-time shock,
-capacity cut. Each perturbs the inputs, re-solves, and reports the deltas.
+**What.** Four: supplier outage, demand spike, lead-time shock, price shock. Each
+perturbs the inputs, re-solves, and reports the deltas.
 
 **Why.** The use case asks for scenario analysis explicitly. Re-solving rather
 than scaling the answer is what makes it real: under a supplier outage the plan

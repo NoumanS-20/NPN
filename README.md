@@ -32,8 +32,8 @@ Everything below is measured, not aspirational. The sources are
   positive labels), so the application falls back to each supplier's observed
   rate and says so on screen.
 - Solve time: about 0.3 s for one plant over two weeks, 9.1 s for all eight plants.
-- Five scenarios — demand spike, supplier outage, price shock, lead-time shock,
-  capacity cut — each re-solved, not scaled.
+- Four scenarios — supplier outage, demand spike, lead-time shock, price shock —
+  each re-solved, not scaled.
 
 ### TrendWear Planner (P2)
 

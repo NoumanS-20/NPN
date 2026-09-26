@@ -27,7 +27,7 @@ capacity, not our calendar.
 | Three risk models plus the sufficiency gate | 3.0 | Includes the calibration experiment we reverted |
 | Allocation MILP | 3.5 | Four separate infeasibility causes, each fixed at source |
 | Baselines and the comparison | 1.0 | |
-| Scenario engine, five scenarios | 1.5 | Lead-time shock needed the horizon allowance tuned |
+| Scenario engine, four scenarios | 1.5 | Lead-time shock needed the horizon allowance tuned |
 | Narrative explanations | 0.5 | |
 | API, 14 endpoints | 1.5 | |
 | Six screens | 3.0 | |

@@ -38,7 +38,7 @@ That means adopting either application is a rewrite of one layer:
 | `requirements` | `material_id`, `plant_id`, `week`, `required_qty` |
 | `orders` (history) | `supplier_id`, `material_id`, `order_date`, `promised_date`, `actual_date`, `qty` — only needed to train the risk models |
 
-Give it those five and the optimiser, the risk scoring, the five scenarios, the
+Give it those five and the optimiser, the risk scoring, the four scenarios, the
 three baselines, the narrative and all six screens work unchanged.
 
 ### What TrendWear's engine needs from you
@@ -76,7 +76,7 @@ These need no change at all to be used on a different problem.
 | Component | What you change |
 |---|---|
 | **The allocation MILP** | The objective terms and which constraint families you switch on. The model is assembled from named constraint builders in `optimizer/model.py`, so dropping "at least two suppliers per material" is deleting one call. |
-| **The scenario engine** | Five scenarios, each a function that perturbs the input tables and re-solves. Adding "a port closes" is one function and one registry entry. |
+| **The scenario engine** | Four scenarios, each a function that perturbs the input tables and re-solves. Adding "a port closes" is one function and one registry entry. |
 | **The production LP** | Capacity, changeover and horizon are config values. |
 | **The S&OP cycle** | Five stages and their labels are a list in `sop/cycle.py`. A different company's cycle is a different list. |
 | **Risk pricing** | The shortage penalty and rework cost are config constants, and they are the two numbers that decide how much extra the plan will pay to avoid risk. Anyone adopting this must set them from their own cost of a stockout. |

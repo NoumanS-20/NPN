@@ -93,7 +93,6 @@ vortex5-scm/
      equal split           supplier outage              with the trade named
      historical mix        price shock
                            lead-time shock
-                           capacity cut
        |                      |                           |
        +----------------------+---------------------------+
                  v
