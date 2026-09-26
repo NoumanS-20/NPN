@@ -15,7 +15,12 @@ dist/
 # Data & models (large, regenerated from source datasets)
 data/raw/
 data/interim/
-data/processed/
+
+# data/processed is NOT ignored. It is 892 KB, it is deterministic (every seed is
+# pinned), and the Dockerfiles copy it. Committing it means the repository builds
+# into a running container anywhere — Render, Cloud Run, a judge's laptop —
+# without Kaggle credentials or a four-minute pipeline run first.
+data/processed/*.sqlite
 *.db
 *.sqlite
 *.sqlite3

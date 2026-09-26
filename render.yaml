@@ -1,0 +1,46 @@
+# Render Blueprint — both applications, free tier, no card required.
+#
+# Render reads this file from the repository root and creates one web service per
+# entry. Push it, point Render at the repo once, and it builds both Dockerfiles
+# in the cloud. Nothing has to be installed locally.
+#
+# Why Render rather than the alternatives we tried:
+#
+#   Hugging Face   the Docker SDK moved behind the PRO plan
+#   Cloud Run      requires a card on the billing account
+#   Vercel         250 MB function limit against 602 MB of dependencies
+#
+# Render's free web services need no card. The constraint that matters is memory:
+# the free instance gives 512 MB, and the applications peak at 237 MB and 186 MB
+# resident — measured after the full eight-plant solve, which is the heaviest
+# thing either of them does. That leaves real headroom rather than a gamble.
+#
+# The images honour $PORT, which Render injects, so the same Dockerfile runs here,
+# on Cloud Run, on Hugging Face and locally.
+
+services:
+  - type: web
+    name: supplyguard
+    runtime: docker
+    repo: https://github.com/NoumanS-20/NPN
+    branch: main
+    # Built from the repository root: the image needs packages/ and the demo pack
+    # as well as the application itself.
+    dockerfilePath: ./apps/pr1/Dockerfile
+    dockerContext: .
+    plan: free
+    region: singapore
+    healthCheckPath: /api/health
+    autoDeploy: true
+
+  - type: web
+    name: trendwear-planner
+    runtime: docker
+    repo: https://github.com/NoumanS-20/NPN
+    branch: main
+    dockerfilePath: ./apps/p2/Dockerfile
+    dockerContext: .
+    plan: free
+    region: singapore
+    healthCheckPath: /api/health
+    autoDeploy: true
