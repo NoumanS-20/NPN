@@ -40,8 +40,22 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           if [ -z "$HF_TOKEN" ]; then
-            echo "No HF_TOKEN secret set — nothing to deploy to. Add it in"
-            echo "Settings → Secrets and variables → Actions."
+            # This job stays green on purpose: a red cross on the repository the
+            # week of the demo is a distraction, and a missing secret is not a
+            # broken build. But a silent green would read as "deployed", so it
+            # says loudly that it did nothing — as an annotation on the run page
+            # and in the job summary, not only buried in a step log.
+            echo "::warning title=Nothing was deployed::HF_TOKEN is not set, so both Spaces were skipped. This run is green because it did nothing, not because it deployed."
+            {
+              echo "## Nothing was deployed"
+              echo
+              echo '`HF_TOKEN` is not set, so both Hugging Face Spaces were skipped.'
+              echo
+              echo "The hosted copies are **not** up to date with \`main\`."
+              echo
+              echo "To fix: add \`HF_TOKEN\` under **Settings → Secrets and variables → Actions**,"
+              echo "then re-run this workflow from the Actions tab."
+            } >> "$GITHUB_STEP_SUMMARY"
             echo "ready=false" >> "$GITHUB_OUTPUT"
           else
             echo "ready=true" >> "$GITHUB_OUTPUT"
@@ -129,6 +143,14 @@ jobs:
       - name: Where to look
         if: steps.token.outputs.ready == 'true'
         run: |
+          {
+            echo "## Deployed"
+            echo
+            echo "- SupplyGuard: https://nouman-20-supplyguard.hf.space"
+            echo "- TrendWear Planner: https://nouman-20-trendwear-planner.hf.space"
+            echo
+            echo "Each takes a few minutes to build, then 30-60 seconds to wake after idling."
+          } >> "$GITHUB_STEP_SUMMARY"
           echo "SupplyGuard  https://nouman-20-supplyguard.hf.space"
           echo "TrendWear    https://nouman-20-trendwear-planner.hf.space"
           echo "Each takes a few minutes to build, then 30-60 seconds to wake after idling."
