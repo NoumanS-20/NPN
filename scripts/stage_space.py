@@ -83,6 +83,44 @@ GITATTRIBUTES = """\
 *.parquet filter=lfs diff=lfs merge=lfs -text
 """
 
+# Everything Cloud Build does not need when deploying with --source. The models
+# and processed tables are NOT excluded: the image is built around them.
+GCLOUDIGNORE = """\
+.git/
+**/__pycache__/
+*.pyc
+.gitattributes
+"""
+
+
+# A Gradio Space runs `python app.py`. That is the only thing the free tier will
+# do for us — the Docker SDK is behind the paid plan — so app.py starts uvicorn
+# on the port Spaces proxies and serves the FastAPI application unchanged.
+#
+# Nothing about the application is adapted for this. It is the same ASGI app the
+# Dockerfile runs and the same one that runs locally; only the launcher differs.
+APP_PY = '''"""Entry point for a Hugging Face Gradio Space.
+
+Spaces runs this file and proxies whatever listens on $PORT (7860 by default).
+The application itself is untouched: same ASGI app, same planning cache, same
+pre-fitted models. Startup loads them once and warms the headline figures, which
+takes ten to fifteen seconds and then serves in milliseconds.
+"""
+
+import os
+import pathlib
+import sys
+
+HERE = pathlib.Path(__file__).resolve().parent
+sys.path[:0] = [str(HERE / "packages"), str(HERE / "apps" / "{key}" / "backend")]
+
+import uvicorn  # noqa: E402  - the path has to be set before this import
+
+from {module}.main import app  # noqa: E402
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 7860)))
+'''
 
 def readme(space: Space) -> str:
     """The Space front matter, plus enough for a visitor arriving cold."""
@@ -91,8 +129,10 @@ title: {space.title}
 emoji: {space.emoji}
 colorFrom: indigo
 colorTo: blue
-sdk: docker
-app_port: {space.port}
+sdk: gradio
+sdk_version: 5.49.1
+app_file: app.py
+python_version: "3.12"
 pinned: false
 license: mit
 ---
@@ -122,11 +162,25 @@ in the repository.
 """
 
 
+def _force_remove(func, path, _exc) -> None:
+    """Delete a file that git left read-only.
+
+    A previous git-based push leaves .git/objects full of read-only pack files,
+    and shutil.rmtree raises PermissionError on them under Windows. Clearing the
+    bit and retrying is the documented fix.
+    """
+    import os
+    import stat
+
+    os.chmod(path, stat.S_IWRITE)
+    func(path)
+
+
 def stage(space: Space, out: Path, force: bool = False) -> Path:
     if out.exists():
         if not force:
             raise SystemExit(f"{out} already exists; pass --force to replace it")
-        shutil.rmtree(out)
+        shutil.rmtree(out, onexc=_force_remove)
     out.mkdir(parents=True)
 
     def copy(source: str, destination: str | None = None) -> None:
@@ -151,8 +205,28 @@ def stage(space: Space, out: Path, force: bool = False) -> Path:
     copy(space.processed)
     copy(space.models)
 
+    (out / "app.py").write_text(
+        APP_PY.format(key=space.key, module=space.module.split(".")[0]), encoding="utf-8"
+    )
+
+    # The Gradio SDK expects gradio to be installable even when, as here, the
+    # application never imports it. Appending rather than editing the source
+    # requirements keeps the Docker image free of it.
+    requirements = (out / "requirements.txt").read_text(encoding="utf-8")
+    if "gradio" not in requirements:
+        (out / "requirements.txt").write_text(
+            requirements.rstrip()
+            + "\ngradio>=5,<6        # only so the Spaces SDK resolves\n",
+            encoding="utf-8",
+        )
+
     (out / "README.md").write_text(readme(space), encoding="utf-8")
     (out / ".gitattributes").write_text(GITATTRIBUTES, encoding="utf-8")
+
+    # Cloud Run's --source deploy uploads this directory to Cloud Build. Without
+    # this it would also upload the .git left by a git-based push and every
+    # __pycache__ written by a local test run.
+    (out / ".gcloudignore").write_text(GCLOUDIGNORE, encoding="utf-8")
     return out
 
 

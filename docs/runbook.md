@@ -134,7 +134,69 @@ hold, but it is untested. Run the script above and this paragraph can go.
 
 ---
 
-## 5. Deploy to Hugging Face Spaces
+## 5. Hosting
+
+Two routes were built. **Cloud Run is the one that works on a free account**; the
+Hugging Face route is kept because the images and the staging are identical and
+it becomes a two-minute deploy if the account is ever upgraded.
+
+### Why Hugging Face did not work
+
+Hugging Face moved **Docker Spaces behind the PRO plan** ($9/month). The pricing
+page lists "Host ZeroGPU, Gradio & Docker Spaces" as a PRO feature, and the Space
+creation form shows the Docker SDK as paid. On a free account:
+
+* the Docker SDK cannot be selected at creation;
+* pushing a README with `sdk: docker` is accepted at the repository level but the
+  Space then fails with `CONFIG_ERROR`;
+* the hardware cannot be downgraded to the free `cpu-basic` tier without PRO.
+
+Nothing in this repository is at fault: the Dockerfile, the push and the upload
+all succeeded. `scripts/deploy_spaces.py` is ready if the plan changes.
+
+### Cloud Run (the working route)
+
+Cloud Run builds the image itself with Cloud Build, so **no local Docker is
+needed** — which is just as well, because it has never been installed here.
+
+One-off setup, all of it yours:
+
+1. Install the gcloud CLI: <https://cloud.google.com/sdk/docs/install>
+2. `gcloud auth login`
+3. `gcloud config set project YOUR_PROJECT_ID`
+4. Attach billing to that project. The free tier covers a demo comfortably, but
+   billing has to be enabled for Cloud Run to run at all.
+
+Then:
+
+```bash
+powershell -ExecutionPolicy Bypass -File scripts/deploy_cloudrun.ps1
+```
+
+It checks the prerequisites, enables the three APIs, and deploys both services
+from the staged trees. `-App pr1` does one; `-Check` lists what is already up.
+
+**Why the flags are what they are.** `--memory 2Gi`, because the planning context
+plus three fitted models sits well above the 512 MB that Render, Koyeb and Fly
+offer free — that is what ruled them out. `--cpu 2`, because the eight-plant
+solve is CPU-bound. `--port 7860`, matching the Dockerfile, though the image
+reads `$PORT` and would work on Cloud Run's default 8080 as well.
+
+**Cold starts.** `--min-instances 0` means the first request after an idle period
+waits 20–30 seconds while the container starts and the context loads. Open both
+URLs ten minutes before the demo, or set `--min-instances 1` for the day and put
+it back afterwards.
+
+### Why not Vercel
+
+Asked and answered, because it is the obvious first thought: Vercel's serverless
+functions cap at 250 MB unzipped and the dependencies alone are **602 MB**
+(scipy 109, pyarrow 86, pandas 60, xgboost 56, sklearn 41). Serverless is also
+stateless, and both applications deliberately load once at startup and warm their
+headline figures — the design that turned the cockpit from 7.9 s into 0.03 s.
+Finally the eight-plant solve is 7.9 s against a 10 s function limit.
+
+## 5b. Deploy to Hugging Face Spaces (needs PRO)
 
 A Space is a git repository with a `Dockerfile` and a `README.md` carrying
 Hugging Face front matter at its root. This repository has two applications, so

@@ -44,4 +44,7 @@ EXPOSE 7860
 HEALTHCHECK --interval=30s --timeout=5s --start-period=40s \
     CMD python -c "import urllib.request;urllib.request.urlopen('http://127.0.0.1:7860/api/health')"
 
-CMD ["uvicorn", "supplyguard.main:app", "--host", "0.0.0.0", "--port", "7860"]
+# Shell form on purpose: Cloud Run injects its own $PORT and the exec form
+# would pass the literal string. 7860 stays the default, so the same image
+# runs unchanged on Hugging Face Spaces and locally.
+CMD uvicorn supplyguard.main:app --host 0.0.0.0 --port ${PORT:-7860}

@@ -47,6 +47,18 @@ def test_each_container_exposes_the_spaces_port_and_runs_uvicorn_on_it() -> None
         assert "uvicorn" in text.split("CMD")[-1], f"{app} does not end in a uvicorn CMD"
 
 
+def test_each_container_honours_an_injected_port() -> None:
+    """Cloud Run sets $PORT and ignores EXPOSE; Spaces expects 7860.
+
+    One image has to satisfy both, which means the default lives in the CMD and
+    the exec form cannot be used — it would pass the literal string "$PORT".
+    """
+    for app, path in DOCKERFILES.items():
+        cmd = path.read_text(encoding="utf-8").split("CMD")[-1]
+        assert "${PORT:-7860}" in cmd, f"{app} ignores an injected PORT"
+        assert not cmd.strip().startswith("["), f"{app} uses exec form, so $PORT will not expand"
+
+
 def test_each_container_runs_the_right_application() -> None:
     assert "supplyguard.main:app" in DOCKERFILES["pr1"].read_text(encoding="utf-8")
     assert "trendwear.main:app" in DOCKERFILES["p2"].read_text(encoding="utf-8")
