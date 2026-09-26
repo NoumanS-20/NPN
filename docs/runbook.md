@@ -154,7 +154,43 @@ creation form shows the Docker SDK as paid. On a free account:
 Nothing in this repository is at fault: the Dockerfile, the push and the upload
 all succeeded. `scripts/deploy_spaces.py` is ready if the plan changes.
 
-### Cloud Run (the working route)
+### Live (Render, free tier, no card)
+
+| | |
+|---|---|
+| SupplyGuard (PR1) | <https://supplyguard-81kd.onrender.com> |
+| TrendWear Planner (P2) | <https://trendwear-planner.onrender.com> |
+
+Deployed from [`render.yaml`](../render.yaml) as a Blueprint: both Dockerfiles,
+free plan, Singapore, health-checked on `/api/health`, redeploying on every push
+to `main`.
+
+Verified after deployment, not assumed: all thirteen screens and the shared
+assets return 200, and every headline figure matches the laptop — 477,455 total
+cost and 65 suppliers for PR1, 54.6% margin and 596,462 consensus for P2. The
+consensus cap works live (asking for 5,742 returns 1,914, "agreed (capped at
+supply)").
+
+**Demo from the laptop anyway, and here is the measured reason.** The free
+instance gives 0.1 CPU, so the optimiser runs about nine times slower:
+
+| Operation | Laptop | Render free |
+|---|---|---|
+| Allocate, one plant, two weeks | 0.3 s | 2.7 s (10.1 s on the first call) |
+| Scenario re-solve | ~1 s | 5.7 s |
+| KPI solve, eight plants | 7.9 s | 78 s |
+
+The KPI figure only bites at startup, because the result is cached and warmed
+once — but it means a cold start is roughly **50 s to wake the container plus 90 s
+to load and warm**. Open both URLs **fifteen minutes** before the slot, not ten.
+
+Two notes. `supplyguard.onrender.com` belongs to somebody else — Render's
+subdomain namespace is global, hence the `-81kd` suffix. And the first deploy
+failed on `libgomp.so.1`: LightGBM and XGBoost link against the OpenMP runtime,
+which `python:3.12-slim` does not ship. Both Dockerfiles now install `libgomp1`
+and a test enforces it.
+
+### Cloud Run (needs a card)
 
 Cloud Run builds the image itself with Cloud Build, so **no local Docker is
 needed** — which is just as well, because it has never been installed here.

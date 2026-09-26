@@ -205,7 +205,7 @@ Open `/api/monitoring`.
 | A screen is blank, API fine | Ctrl+Shift+R. Both apps send no-cache headers on front-end paths, so this is rare. |
 | A server has died | The other tab still works. Restart in a terminal (`uvicorn ... --port 8001`); it is back in fifteen seconds. Fill the time with the Models screen on the other app. |
 | "Infeasible" | Say what it is: the constraint set is tight for that slice. Narrow it, re-solve, and point out the relaxation ladder reports whatever it waives. Do not click the same button twice hoping. |
-| A Space is asleep | Ignore it. The demo is the laptop; the Space is the link we leave behind. |
+| A hosted copy is asleep | Ignore it. The demo is the laptop — the hosted copies run on 0.1 CPU and solve nine times slower. They are the link we leave behind. |
 | No network at all | Nothing changes. Both apps run entirely offline — say so, because it is a feature. |
 | A number contradicts this script | Read the screen, not the script. Every seed is pinned, so the app is right and the slice is different. |
 
