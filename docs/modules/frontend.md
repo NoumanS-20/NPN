@@ -122,10 +122,11 @@ Measured on the running app, Nigeria, two weeks, 46 lines:
 
 | Preset | Invoice | Expected late units | High-risk volume |
 |---|---|---|---|
-| Price only | $8,864 | 11,418 | 3.7% |
-| Risk averse | $8,969 (+1.2%) | 10,757 (−5.8%) | **0.0%** |
+| Price only | ₹7,57,859 | 11,461 | 3.5% |
+| Balanced | ₹7,58,625 (+0.1%) | 10,899 | 2.9% |
+| Risk averse | ₹7,64,767 (+0.9%) | 10,683 (−6.8%) | **0.7%** |
 
-The page narrates the change itself — *"+1.2% on the invoice, −5.8% expected late units"* — so nobody has to
+The page narrates the change itself — *"+0.9% on the invoice, −6.8% expected late units"* — so nobody has to
 read two numbers off a screen and subtract them in their head.
 
 ### Details that came out of using it

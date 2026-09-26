@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import pandas as pd
 import pytest
+from pyshared.currency import USD_TO_INR
 from supplyguard.config import RAW_SCMS
 from supplyguard.etl.scms import REQUIRED_COLUMNS, load_scms
 
@@ -70,8 +71,13 @@ def test_freight_cost_is_numeric_with_bundled_and_known_flags(scms: pd.DataFrame
 def test_cross_reference_text_never_becomes_a_freight_amount(scms: pd.DataFrame) -> None:
     """Regression: 'See DN-93 (ID#:1281)' must not parse as 931281.
 
-    Stripping non-digits from that string produced a $931k freight charge on
+    Stripping non-digits from that string produced a 931,281 freight charge on
     2,445 rows, which would have silently corrupted every cost comparison.
+
+    The ceiling below is written in dollars and converted, because the source
+    column is dollars and the sane-maximum judgement was made about dollars. Had
+    it been hardcoded in rupees it would have had to be re-reasoned from scratch
+    the next time the rate changed.
     """
     raw = pd.read_csv(RAW_SCMS, low_memory=False)
     reference_rows = raw["Freight Cost (USD)"].astype(str).str.contains("See ", na=False)
@@ -80,7 +86,9 @@ def test_cross_reference_text_never_becomes_a_freight_amount(scms: pd.DataFrame)
     affected = scms[scms["po_id"].isin(ids)]
     assert (affected["freight_cost"] == 0).all()
     assert not affected["freight_known"].any()
-    assert scms["freight_cost"].max() < 300_000                 # no absurd charges anywhere
+    # No absurd charges anywhere: 300k dollars is already far above any real
+    # freight line in this data, and the column is now stored in rupees.
+    assert scms["freight_cost"].max() < 300_000 * USD_TO_INR
 
 
 def test_every_row_is_marked_as_real(scms: pd.DataFrame) -> None:

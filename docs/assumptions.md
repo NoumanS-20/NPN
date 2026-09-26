@@ -7,6 +7,34 @@ The mentor's written ruling of 25 September 2026 permits Kaggle data mixed with 
 on top of that: **reported accuracy figures are computed on real records only**, so generated data can make a
 problem larger but never make a score look better.
 
+## Currency: everything is rupees, converted once
+
+**What we assume:** ₹83 = $1.
+
+**Why it needs saying.** The SCMS procurement data is real, American, and priced
+in **US dollars**. Our audience is Indian, so every screen and every document
+reports rupees. We convert the money when the data is read, not when it is
+displayed — so there is never a moment where two currencies are alive in the
+system and nobody can tell which is which.
+
+We did **not** simply swap the dollar sign for a rupee sign. That would have made
+every figure wrong by a factor of eighty-three, and it is exactly the sort of
+thing a reviewer checks.
+
+**Where it lives:** `packages/pyshared/currency.py`, one constant, used by both
+applications. Change it there and rebuild; nothing else needs to know.
+
+**What it does not affect:** every percentage. A 25% saving is 25% whatever the
+currency, so all the comparison figures are unchanged by the conversion.
+
+**The honest caveat:** it is a fixed, stated rate, not a live exchange rate. A
+demo whose numbers changed with the market could not be rehearsed.
+
+TrendWear's retail data has no real currency at all — it is invented — so its
+prices are scaled by the same factor. That keeps one money scale across both
+applications and makes a shirt cost a believable number of rupees instead of
+about fifty.
+
 ## PR1 — SupplyGuard
 
 ### Derived from real trading history

@@ -36,7 +36,7 @@ from two factories has two lead times and two delivery records.
 2. **Freight cost is only 60% numeric.** The rest is three different things: `Freight Included in Commodity
    Cost` (the freight really was paid, inside the item price), `See DN-93 (ID#:1281)` (a cross-reference to
    another document), and `Invoiced Separately`. An early version stripped non-digits, which turned that
-   cross-reference into a **$931,281 freight charge on 2,445 rows** and would have corrupted every cost
+   cross-reference into a **931,281 freight charge on 2,445 rows** (the source column is in dollars) and would have corrupted every cost
    comparison the optimiser makes. Freight is now parsed strictly and carries two flags: `freight_known`
    (60% of rows) and `freight_bundled` (14%). A regression test fails if reference text ever becomes money
    again.

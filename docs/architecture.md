@@ -125,11 +125,11 @@ dearer on paper and cheaper in reality.
        v                                     v
     forecast/model.py                     forecast/coldstart.py
      LightGBM, chronological split          nearest analogue by attributes
-     WAPE 0.340 vs 0.445 seasonal naive     WAPE 0.378 vs 0.417 category avg
+     WAPE 0.337 vs 0.445 seasonal naive     WAPE 0.378 vs 0.417 category avg
        |                                     |
        +-----------------+-------------------+
                          v
-    13-week demand forecast  ·  599,528 units
+    13-week demand forecast  ·  608,296 units
                          |
        +-----------------+------------------+------------------+
        v                                    v                  v
@@ -137,7 +137,7 @@ dearer on paper and cheaper in reality.
      safety stock z x sigma x sqrt(L)     LP over 3 plants     sell-through
      95% planned, 96.8% achieved          capacity and         against plan;
      in a 2,722-week backtest             changeover           revenue with
-       |                                  652,062 units        salvage, because
+       |                                  660,350 units        salvage, because
        |                                  peak use 100%        the buy is sunk;
        |                                     |                 elasticity -1.8,
        |                                     v                 assumed, and the
@@ -149,7 +149,7 @@ dearer on paper and cheaper in reality.
                          v
     sop/reconcile.py     three plans, one agreed number
       merchandising 696k   ·   forecast 600k   ·   supply 652k
-      gap 99,686 units = 5.56 M   ·   consensus 596,462 units
+      gap 102,318 units = ₹47.3 crore   ·   consensus 604,409 units
       the consensus may be lowered by hand, never raised above supply
     sop/cycle.py         rolling monthly cycle, 5 stages, versioned
     sop/financials.py    revenue, margin, inventory, distribution cost

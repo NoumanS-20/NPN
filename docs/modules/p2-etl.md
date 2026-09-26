@@ -48,7 +48,7 @@ The dataset has demand and price. A sales-and-operations plan needs rather more.
 | Fabrics, MOQ, lead time, price | 6 | Apparel-typical values: 5-week lead time, MOQ in the low thousands of metres |
 | Bill of materials | one row per style | Metres per unit by category |
 | DC-to-store lanes | 5 | Lead time and cost per unit by distance band |
-| The merchandising plan | one row per style-week | The forecast times a per-style ambition factor, drawn once per style so a buyer's optimism is consistent across a season rather than random week to week. Averages **+16.1%** |
+| The merchandising plan | one row per style-week | The forecast times a per-style ambition factor, drawn once per style so a buyer's optimism is consistent across a season rather than random week to week. Averages **+16.2%** |
 
 The full method for each is in [../assumptions.md](../assumptions.md). Two things
 to note about how this was done:

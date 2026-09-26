@@ -18,7 +18,7 @@ Trained on 2,031 style-weeks to **2023-08-21**, tested on 371 style-weeks from
 
 | Method | WAPE | Reading |
 |---|---|---|
-| **LightGBM** (chosen) | **0.340** | |
+| **LightGBM** (chosen) | **0.337** | |
 | Moving average (4 weeks) | 0.3625 | A planner's spreadsheet |
 | Seasonal naive (52 weeks) | 0.445 | The standard published baseline |
 
@@ -26,7 +26,7 @@ Also: MAPE 0.560, bias **+2.6%**, MAE 475 units.
 
 **The honest reading.** 24% better than seasonal naive and 6% better than a
 moving average. The moving-average margin is the one to quote, because that is
-what the forecast is actually replacing. WAPE 0.34 on weekly style-level apparel
+what the forecast is actually replacing. WAPE 0.337 on weekly style-level apparel
 demand is a reasonable number — style-level demand is genuinely noisy — but it is
 not a triumph, and the bias being near zero matters more for planning than the
 absolute error.

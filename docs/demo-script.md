@@ -23,7 +23,7 @@ Already open. Do not click anything yet.
 > costs 20% less in total than the way this organisation actually bought last
 > year, and 14% fewer units are expected to arrive late."
 
-Point at the tiles: **total cost 477,455 · invoice 282,058 · 65 suppliers used ·
+Point at the tiles: **total cost ₹3.96 crore · invoice ₹2.34 crore · 65 suppliers used ·
 1.6% of volume on high-risk suppliers**.
 
 > "The data underneath is 10,324 real purchase orders from a health-commodity
@@ -104,8 +104,8 @@ Run **supplier outage**.
 > no shared models, no shared code. A test in the repository fails the build if
 > one imports the other."
 
-Point at the tiles: **consensus 596,462 units · gap 99,686 units worth 5.57
-million · revenue 32.9 M · margin 54.6%**.
+Point at the tiles: **consensus 604,409 units · gap 102,318 units worth 5.57
+million · revenue ₹277 crore · margin 54.5%**.
 
 > "This is one monthly sales-and-operations planning cycle. The job is to turn
 > three disagreeing plans into one number the business commits to."
@@ -118,8 +118,8 @@ million · revenue 32.9 M · margin 54.6%**.
 
 Point at the three lines on the chart.
 
-> "The gap between what the buyers want and what the plants can make is 99,686
-> units — 5.56 million in revenue. That gap *is* the S&OP meeting."
+> "The gap between what the buyers want and what the plants can make is 102,318
+> units — ₹47.3 crore in revenue. That gap *is* the S&OP meeting."
 
 Scroll to the biggest gaps table.
 
@@ -146,7 +146,7 @@ the difference. A meeting may always commit to less.
 ### 1:50 — Merchandising (`/pages/merchandising.html`)
 
 > "Where the forecast comes from. LightGBM on lags, rolling statistics, price and
-> discount. WAPE 0.340 against 0.445 for seasonal naive — 24% better than the
+> discount. WAPE 0.337 against 0.445 for seasonal naive — 24% better than the
 > baseline, on a chronological split."
 
 > "And for a style with no history at all, a nearest-analogue method: 0.378
@@ -174,7 +174,7 @@ Mention fabric briefly:
 ### 3:15 — Markdown (`/pages/markdown.html`) — **the honesty slide**
 
 > "Ten styles are behind their sell-through plan, so each gets a recommended
-> markdown week and depth, worth about 159,000 in recovered margin."
+> markdown week and depth, worth about ₹1.32 crore in recovered margin."
 
 > "One thing to be straight about. We tried to fit the price response from this
 > data. It explains 0.0% of the variation. So the depth uses a published apparel

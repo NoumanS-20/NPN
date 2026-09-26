@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
+from pyshared.currency import USD_TO_INR
 
 from trendwear.config import LAUNCH_CADENCE_WEEKS, SEED, TARGET_STYLE_COUNT
 
@@ -37,13 +38,21 @@ CATEGORIES = (
     ("Jacket", 3.4, 0.55),
 )
 
-FABRICS = (
+# Reference cost per metre, in the dollar scale the rest of the source data uses.
+# Kept in that scale because these are recognisable apparel mill prices; the
+# conversion to rupees happens once, below, so there is only one rate anywhere.
+_FABRIC_COST_USD_PER_METRE = (
     ("cotton-jersey", 6.20),
     ("cotton-poplin", 7.10),
     ("viscose-crepe", 8.40),
     ("wool-blend", 12.60),
     ("denim-12oz", 9.80),
     ("technical-shell", 15.30),
+)
+
+# What the application actually uses: rupees per metre.
+FABRICS = tuple(
+    (name, round(usd * USD_TO_INR, 2)) for name, usd in _FABRIC_COST_USD_PER_METRE
 )
 
 _ADJECTIVE = ("Harbour", "Meadow", "Atlas", "Solstice", "Corso", "Linden", "Brio", "Vale",
@@ -226,7 +235,10 @@ def build_network(catalogue: pd.DataFrame, seed: int = SEED) -> dict[str, pd.Dat
             "store_id": store.store_id,
             "distance_band": band,
             "transit_days": band * 2 + 1,
-            "cost_per_unit": round(0.35 + band * 0.22, 2),
+            # Rupees per unit moved, rising with distance band. The reference
+            # figures are in the same dollar scale as everything else in this
+            # file, converted once so there is a single rate in the codebase.
+            "cost_per_unit": round((0.35 + band * 0.22) * USD_TO_INR, 2),
             "mode": "Road" if band < 3 else "Rail",
         })
 

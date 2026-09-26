@@ -18,16 +18,16 @@ Three numbers exist for every style and week, and they rarely agree:
 
 | Plan | What it is | Total |
 |---|---|---|
-| **Merchandising** | What the buyers intend to sell — a commercial ambition, **+16.1%** above the forecast, because a buyer who plans for the statistical average has already given up on the season | **696,148** units |
-| **Statistical forecast** | What the data expects ([p2-forecast.md](p2-forecast.md)) | **599,528** units |
-| **Constrained supply** | What the plants can actually make, after capacity and fabric lead times ([p2-planning.md](p2-planning.md)) | **652,062** units |
+| **Merchandising** | What the buyers intend to sell — a commercial ambition, **+16.2%** above the forecast, because a buyer who plans for the statistical average has already given up on the season | **706,727** units |
+| **Statistical forecast** | What the data expects ([p2-forecast.md](p2-forecast.md)) | **608,296** units |
+| **Constrained supply** | What the plants can actually make, after capacity and fabric lead times ([p2-planning.md](p2-planning.md)) | **660,350** units |
 
 **The gap between the first and the third is the conversation the cycle exists to
-have:** 99,686 units, **5.56 million** in revenue, across 34 styles that are
+have:** 102,318 units, **₹47.3 crore** in revenue, across 34 styles that are
 short.
 
 The **consensus** is the single number the business commits to:
-**596,462 units**.
+**604,409 units**.
 
 ### The one rule enforced in code
 
@@ -81,20 +81,20 @@ financial number has not finished:
 
 | | |
 |---|---|
-| Revenue | 32,929,207 |
-| Cost of sales | 14,955,585 |
-| Gross margin | **17,973,622** (54.6%) |
-| Inventory value | 1,264,864 |
-| Distribution cost | 471,205 |
+| Revenue | 2,770,018,558 |
+| Cost of sales | 1,259,580,982 |
+| Gross margin | **1,510,437,576** (54.5%) |
+| Inventory value | 104,988,940 |
+| Distribution cost | 3,96,31,072 |
 | Lost sales value | 0 |
-| Contribution | 17,502,416 |
-| Units committed | 596,462 |
+| Contribution | 1,470,806,504 |
+| Units committed | 604,409 |
 
 Also reported by category, so the screen answers "where is the margin" and not
 only "how much".
 
 **Lost sales are zero**, and that needs saying rather than glossing: the plan meets
-the *forecast* in full. The 5.56 M gap is against merchandising *ambition*, which
+the *forecast* in full. The ₹47.3 crore gap is against merchandising *ambition*, which
 is a different and larger number. Confusing the two would overstate the problem.
 
 ---
@@ -104,7 +104,7 @@ is a different and larger number. Confusing the two would overstate the problem.
 `distribution.py` covers the part of the use case that is easy to forget: **made is
 not the same as on sale**. DC-to-store lanes carry a lead time and a cost per unit,
 so a unit produced in week 6 is available to sell in week 7 or 8, and the
-distribution cost (471,205) lands in the financials.
+distribution cost (3,96,31,072) lands in the financials.
 
 ---
 

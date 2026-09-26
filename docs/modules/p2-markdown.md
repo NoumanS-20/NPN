@@ -9,7 +9,7 @@ behind, recommends **which week** to mark down and **by how much**.
 **Why it matters.** It is a named requirement of the use case, and it is the
 module where we had to choose between a confident answer and an honest one.
 
-**Measured.** 10 styles recommended for markdown, **159,000 in recovered
+**Measured.** 10 styles recommended for markdown, **₹1.32 crore in recovered
 margin**.
 
 ---
@@ -66,7 +66,7 @@ value of holding price  = P(sell at full price)           × full price
                           + P(unsold) × salvage value
 ```
 
-Repricing on that basis turned "never" into a 159,000 recovery. The lesson is
+Repricing on that basis turned "never" into a ₹1.32 crore recovery. The lesson is
 worth stating in the interview: the model was fine and the objective was wrong,
 and no amount of tuning would have found it.
 

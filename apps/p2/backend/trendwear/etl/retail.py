@@ -38,6 +38,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from pyshared.currency import USD_TO_INR
 from pyshared.timeutil import to_week_start
 
 CATEGORY = "Clothing"
@@ -64,12 +65,18 @@ def load_daily(path: Path) -> pd.DataFrame:
         "units": pd.to_numeric(clothing["Units Sold"], errors="coerce").fillna(0).clip(lower=0),
         "inventory": pd.to_numeric(clothing["Inventory Level"], errors="coerce").fillna(0),
         "ordered": pd.to_numeric(clothing["Units Ordered"], errors="coerce").fillna(0),
-        "price": pd.to_numeric(clothing["Price"], errors="coerce"),
+        # The source set carries no currency at all - it is synthetic. Scaling by
+        # the same factor the real dollar data uses keeps one money scale across
+        # both applications, and makes a shirt cost a believable number of rupees
+        # instead of about fifty.
+        "price": pd.to_numeric(clothing["Price"], errors="coerce") * USD_TO_INR,
         "discount_pct": pd.to_numeric(clothing["Discount"], errors="coerce").fillna(0) / 100.0,
         "promo": (
             pd.to_numeric(clothing["Holiday/Promotion"], errors="coerce").fillna(0).astype(int)
         ),
-        "competitor_price": pd.to_numeric(clothing["Competitor Pricing"], errors="coerce"),
+        "competitor_price": (
+            pd.to_numeric(clothing["Competitor Pricing"], errors="coerce") * USD_TO_INR
+        ),
         "seasonality": clothing["Seasonality"].astype("string").str.strip(),
         "weather": clothing["Weather Condition"].astype("string").str.strip(),
     })

@@ -25,6 +25,7 @@ import re
 from pathlib import Path
 
 import pandas as pd
+from pyshared.currency import USD_TO_INR
 
 from supplyguard.config import DATE_PLACEHOLDERS
 
@@ -116,10 +117,20 @@ def load_scms(path: Path) -> pd.DataFrame:
     df["shipment_mode"] = raw["Shipment Mode"].astype("string").str.strip().fillna("Unknown")
 
     df["qty"] = pd.to_numeric(raw["Line Item Quantity"], errors="coerce").fillna(0).clip(lower=0)
-    df["unit_price"] = pd.to_numeric(raw["Unit Price"], errors="coerce").fillna(0.0).clip(lower=0)
-    df["pack_price"] = pd.to_numeric(raw["Pack Price"], errors="coerce").fillna(0.0).clip(lower=0)
+    # SCMS is USAID-funded procurement and its money columns are US dollars.
+    # Everything downstream — the optimiser's objective, every screen, every
+    # figure in the documentation — is rupees, so the conversion happens here,
+    # once, at the point the money enters. Converting later would mean two
+    # currencies alive in the same system and no way to tell which was which.
+    df["unit_price"] = (
+        pd.to_numeric(raw["Unit Price"], errors="coerce").fillna(0.0).clip(lower=0) * USD_TO_INR
+    )
+    df["pack_price"] = (
+        pd.to_numeric(raw["Pack Price"], errors="coerce").fillna(0.0).clip(lower=0) * USD_TO_INR
+    )
     df["line_value"] = (
         pd.to_numeric(raw["Line Item Value"], errors="coerce").fillna(0.0).clip(lower=0)
+        * USD_TO_INR
     )
     df["weight_kg"] = pd.to_numeric(
         raw["Weight (Kilograms)"].astype("string").str.replace(r"[^0-9.\-]", "", regex=True),
@@ -129,6 +140,10 @@ def load_scms(path: Path) -> pd.DataFrame:
     df["freight_cost"], df["freight_bundled"], df["freight_known"] = _parse_freight(
         raw["Freight Cost (USD)"]
     )
+    # The source column says USD in its own name. Convert it like the rest, but
+    # only where a number was actually parsed - a bundled or unknown freight
+    # charge stays zero rather than becoming a converted zero that looks real.
+    df["freight_cost"] = df["freight_cost"] * USD_TO_INR
 
     for name, column in _DATE_COLUMNS.items():
         df[name] = _parse_dates(raw[column])

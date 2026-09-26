@@ -166,8 +166,8 @@ free plan, Singapore, health-checked on `/api/health`, redeploying on every push
 to `main`.
 
 Verified after deployment, not assumed: all thirteen screens and the shared
-assets return 200, and every headline figure matches the laptop — 477,455 total
-cost and 65 suppliers for PR1, 54.6% margin and 596,462 consensus for P2. The
+assets return 200, and every headline figure matches the laptop — ₹3.96 crore total
+cost and 65 suppliers for PR1, 54.5% margin and 604,409 consensus for P2. The
 consensus cap works live (asking for 5,742 returns 1,914, "agreed (capped at
 supply)").
 

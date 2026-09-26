@@ -1,9 +1,9 @@
 {
   "forecast": {
-    "wape": 0.3403,
-    "mape": 0.5602,
-    "bias": 0.0262,
-    "mae": 474.5104,
+    "wape": 0.3367,
+    "mape": 0.5552,
+    "bias": 0.0309,
+    "mae": 469.4748,
     "support": 371.0,
     "wape_seasonal_naive": 0.4449,
     "wape_moving_average": 0.3625,
@@ -15,16 +15,16 @@
     "beats_seasonal_naive": true
   },
   "forecast_importance": {
-    "rolling_std_4": 0.1022,
-    "lag_4": 0.1017,
-    "rolling_4": 0.0917,
-    "lag_2": 0.0915,
-    "price_vs_competitor": 0.09,
-    "price": 0.0894,
-    "lag_1": 0.0891,
-    "discount_pct": 0.0875,
-    "rolling_13": 0.0864,
-    "week_of_year": 0.0652
+    "lag_4": 0.1065,
+    "rolling_std_4": 0.096,
+    "price": 0.093,
+    "rolling_4": 0.0903,
+    "lag_1": 0.0897,
+    "lag_2": 0.0888,
+    "price_vs_competitor": 0.0874,
+    "rolling_13": 0.0868,
+    "discount_pct": 0.0832,
+    "week_of_year": 0.0638
   },
   "cold_start": {
     "scored": true,
@@ -36,7 +36,7 @@
         "wape": 0.3776,
         "mape": 0.5735,
         "bias": 0.0034,
-        "mae": 532.8385,
+        "mae": 532.8231,
         "support": 13
       },
       "category_average": {
@@ -53,27 +53,27 @@
   },
   "safety_stock": {
     "weeks_observed": 2722,
-    "weeks_demand_exceeded_cover": 87,
-    "breach_rate": 0.032,
-    "implied_service_level": 0.968,
-    "stock_held": 52533.4
+    "weeks_demand_exceeded_cover": 86,
+    "breach_rate": 0.0316,
+    "implied_service_level": 0.9684,
+    "stock_held": 52053.7
   },
   "financials": {
-    "revenue": 32929206.63,
-    "cost_of_sales": 14955585.02,
-    "gross_margin": 17973621.61,
-    "margin_pct": 0.5458,
-    "inventory_value": 1264864.35,
-    "distribution_cost": 471205.3,
+    "revenue": 2770018557.68,
+    "cost_of_sales": 1259580981.93,
+    "gross_margin": 1510437575.75,
+    "margin_pct": 0.5453,
+    "inventory_value": 104988940.16,
+    "distribution_cost": 39631071.9,
     "lost_sales_value": 0.0,
-    "contribution": 17502416.32,
-    "units_committed": 596462.4
+    "contribution": 1470806503.85,
+    "units_committed": 604408.6
   },
   "production": {
     "status": "optimal",
     "lost_sales_units": 0.0,
     "lost_sales_value": 0.0,
-    "solve_seconds": 0.213
+    "solve_seconds": 0.2
   },
   "elasticity": {
     "value": -1.8,

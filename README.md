@@ -39,16 +39,16 @@ Everything below is measured, not aspirational. The sources are
 
 - 60 styles (20 from the data, 40 generated), 106 weeks of history, 3 plants,
   5 stores, 6 fabrics.
-- Demand forecast: LightGBM, **WAPE 0.340** against 0.445 for seasonal naive.
+- Demand forecast: LightGBM, **WAPE 0.337** against 0.445 for seasonal naive.
   Cold start for styles with no history: **0.378** against 0.417 for a category
   average.
 - Safety stock planned at a 95% service level, **96.8% achieved** in a
   2,722-week backtest.
 - The reconciliation: merchandising wants 696k units, the forecast says 600k, the
-  plants can make 652k — a gap of **99,686 units worth 5.56 M**. The consensus
+  plants can make 652k — a gap of **102,318 units worth ₹47.3 crore**. The consensus
   can be lowered by hand and never raised above supply.
-- Revenue 32.9 M, gross margin 18.0 M (54.6%), 10 styles recommended for markdown
-  worth 159 k in recovered margin.
+- Revenue ₹277 crore, gross margin ₹151 crore (54.5%), 10 styles recommended for markdown
+  worth ₹1.32 crore in recovered margin.
 - Production LP solves in 0.2 s at 100% peak capacity utilisation with zero
   shortfall.
 

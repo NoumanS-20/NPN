@@ -21,8 +21,11 @@ const MISSING = "—";
  */
 export function money(value, currency) {
   if (value == null || Number.isNaN(value)) return MISSING;
-  const code = typeof currency === "string" ? currency : "USD";
-  return new Intl.NumberFormat("en-US", {
+  // Rupees, and the Indian digit grouping that goes with them: 12,34,567 rather
+  // than 1,234,567. Both applications convert to rupees when the data is loaded,
+  // so by the time a number reaches here it is already in the right currency.
+  const code = typeof currency === "string" ? currency : "INR";
+  return new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency: code,
     maximumFractionDigits: 0,

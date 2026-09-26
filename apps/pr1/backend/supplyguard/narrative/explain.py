@@ -10,11 +10,18 @@ and first on the cut list. The templates are what ships.
 
 from __future__ import annotations
 
+from pyshared.currency import CURRENCY_SYMBOL
+
 from supplyguard.optimizer.types import AllocationResult
 
 
 def _money(value: float) -> str:
-    return f"${value:,.0f}"
+    """Rupees, whole units, for text a planner would paste into an email.
+
+    The rupee sign rather than the code, because this is prose and "Rs 8,882"
+    reads like an invoice while the symbol reads like a sentence.
+    """
+    return f"{CURRENCY_SYMBOL}{value:,.0f}"
 
 
 def _pct(value: float, digits: int = 1) -> str:

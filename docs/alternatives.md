@@ -52,7 +52,7 @@ otherwise would have been the single worst thing in this project.
 
 ## 3. Demand forecast: LightGBM
 
-**Chosen.** LightGBM on lag and rolling features, WAPE **0.340** against 0.445
+**Chosen.** LightGBM on lag and rolling features, WAPE **0.337** against 0.445
 for seasonal naive and 0.3625 for a moving average.
 
 | Rejected | Why not |
@@ -151,7 +151,7 @@ Face hosted inference available behind a key for the free-text summaries.
 Recording these because the corrections are the actual engineering.
 
 **Freight parsing.** The SCMS freight column contains values like
-`"See DN-93 (ID#:1281)"`. Stripping non-digits turned that into **$931,281** on
+`"See DN-93 (ID#:1281)"`. Stripping non-digits turned that into **931,281** — in the source column, which is dollars — on
 2,445 rows. Fixed with strict numeric parsing plus explicit `freight_known` and
 `freight_bundled` flags, and a named regression test. Every freight figure is now
 either a number or absent, never a fabricated one.

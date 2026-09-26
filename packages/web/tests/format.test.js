@@ -12,8 +12,11 @@ import { test } from "node:test";
 import { delta, days, humanise, money, pct, price, riskBand, truncate, units } from "../format.js";
 
 test("money has no decimals, because procurement deals in whole units", () => {
-  assert.equal(money(113408), "$113,408");
-  assert.equal(money(0), "$0");
+  // Rupees, with Indian digit grouping: 1,13,408 is one lakh thirteen thousand.
+  // Western grouping would read 113,408 - same number, wrong convention for
+  // the audience, and the mismatch is exactly what people notice on a slide.
+  assert.equal(money(113408), "₹1,13,408");
+  assert.equal(money(0), "₹0");
 });
 
 test("unit price keeps the fractions that matter", () => {
@@ -42,7 +45,7 @@ test("formatters survive being handed a row as their second argument", () => {
   // The table calls format(value, record). Passing money or pct by name then
   // puts a row object into the currency or digits slot; both must cope.
   const row = { style_id: "A", units: 10 };
-  assert.equal(money(1234, row), "$1,234");
+  assert.equal(money(1234, row), "₹1,234");
   assert.equal(pct(0.5, row), "50.0%");
   assert.equal(delta(1.25, row), "+1.3%");
 });

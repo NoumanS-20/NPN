@@ -17,8 +17,8 @@ deviation, L the lead time in weeks, and z the normal quantile for the target
 service level (1.645 at 95%).
 
 **Measured.** Planned at a 95% service level. Backtested over **2,722
-style-weeks**: demand exceeded cover in **87** of them, a breach rate of 3.2% —
-an **achieved service level of 96.8%**, holding 52,533 units.
+style-weeks**: demand exceeded cover in **86** of them, a breach rate of 3.2% —
+an **achieved service level of 96.8%**, holding 52,054 units.
 
 **Why the backtest is the point.** The planned service level is an input: anyone
 can type 95. The achieved level is a result, and it is the only version of the
@@ -29,7 +29,7 @@ about.
 
 **Differently.** Take σ from the forecast model's own residuals, or better, from
 quantile forecasts. And optimise the service level against the cost of a stockout
-rather than fixing it at 95% — a style with 54.6% margin and one with 20% do not
+rather than fixing it at 95% — a style with 54.5% margin and one with 20% do not
 deserve the same buffer.
 
 ---
@@ -43,7 +43,7 @@ weekly capacity and changeover, to meet the forecast as fully as possible.
 penalty on unmet demand, subject to weekly capacity per plant, changeover
 allowance, and no production before a style's launch week.
 
-**Measured.** 3 plants, 13 weeks, **652,062 units**, **peak utilisation 100%**,
+**Measured.** 3 plants, 13 weeks, **660,350 units**, **peak utilisation 100%**,
 **zero shortfall**, solved in **0.2 seconds**, status optimal.
 
 **Why 100% matters.** It is not a coincidence, it is the calibration described in
@@ -53,7 +53,7 @@ capacity constraint with slack would have made every other screen less
 interesting and taught a panel nothing.
 
 **Zero shortfall, honestly.** The plan meets the *forecast* in full. It does not
-meet the *merchandising ambition* — that is the 99,686-unit gap in
+meet the *merchandising ambition* — that is the 102,318-unit gap in
 [p2-sop.md](p2-sop.md). Those are two different statements and it is worth being
 precise about which one this module makes.
 
