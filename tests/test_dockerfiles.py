@@ -74,6 +74,22 @@ def test_the_healthcheck_probes_the_same_port_the_app_listens_on() -> None:
         assert "127.0.0.1:7860/api/health" not in text, f"{app} still hardcodes 7860"
 
 
+def test_each_container_installs_the_openmp_runtime() -> None:
+    """LightGBM and XGBoost link against libgomp, which slim does not ship.
+
+    The first real deploy died here: the image built, then crashed on import
+    with "libgomp.so.1: cannot open shared object file". Nothing in the Python
+    code was wrong, so the failure read as an application bug.
+    """
+    for app, path in DOCKERFILES.items():
+        text = path.read_text(encoding="utf-8")
+        assert "libgomp1" in text, f"{app} does not install the OpenMP runtime"
+        # It has to be installed before pip, or the layer cache hides the fix.
+        assert text.index("libgomp1") < text.index("pip install"), (
+            f"{app} installs libgomp1 after pip"
+        )
+
+
 def test_each_container_runs_the_right_application() -> None:
     assert "supplyguard.main:app" in DOCKERFILES["pr1"].read_text(encoding="utf-8")
     assert "trendwear.main:app" in DOCKERFILES["p2"].read_text(encoding="utf-8")

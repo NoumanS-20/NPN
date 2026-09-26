@@ -19,6 +19,14 @@ ENV PYTHONUNBUFFERED=1 \
 
 WORKDIR /app
 
+# LightGBM and XGBoost are compiled against the GNU OpenMP runtime, and
+# python:3.12-slim does not ship it. Without this the image builds cleanly and
+# then dies on import with "libgomp.so.1: cannot open shared object file",
+# which reads as an application bug rather than a missing system library.
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends libgomp1 \
+ && rm -rf /var/lib/apt/lists/*
+
 COPY requirements.txt ./
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
