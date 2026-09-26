@@ -34,3 +34,6 @@ kaggle.json
 Thumbs.db
 .idea/
 .vscode/
+
+# Space staging output
+build/

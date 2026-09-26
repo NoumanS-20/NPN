@@ -17,6 +17,31 @@ No data, features, models or planning logic are shared between the apps.
 SQLite, pytest · plain HTML, CSS and JavaScript (ES modules, no build step), Chart.js, `node --test` + jsdom ·
 Hugging Face (Chronos-Bolt, hosted inference for narrative) · GitHub Actions → Hugging Face Docker Spaces.
 
+## Status — 26 September 2026
+
+**All 27 tasks are built.** 350 Python tests, 32 JavaScript tests, ruff clean, 13
+screens, both containers defined, both Space staging trees verified.
+
+Three things remain, and all three are the repository owner's to do:
+
+1. **Commit and push.** Nothing in this build has been committed; that is
+   deliberate and stated in the note above.
+2. **Create the two Hugging Face Spaces** under `Nouman-20` and push the staged
+   trees — `python scripts/stage_space.py pr1 --force` then the commands it prints.
+   See `docs/runbook.md` §5.
+3. **Add two repository secrets** for the deploy workflow: `HF_TOKEN` and
+   `KAGGLE_ACCESS_TOKEN`. Both tokens used during the build should be rotated after
+   30 September.
+
+One limitation to note rather than discover: **the containers have never been
+built**, because Docker is not installed on the build machine. What was verified is
+the exact tree they create — both applications were started from the staged Space
+directories, on port 7860, with the container's `PYTHONPATH`, and answered on
+`/api/health`, `/api/kpis`, the pages and `/shared/`. `docs/runbook.md` §4 says the
+same thing in the same words.
+
+---
+
 ## Global Constraints
 
 - **Separation rule:** PR1 and P2 share no data, no models and no runtime calls. `packages/` may contain only

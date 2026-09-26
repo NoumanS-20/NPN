@@ -253,6 +253,31 @@ def model_metrics() -> dict[str, Any]:
     return state.context.metrics
 
 
+@router.get("/monitoring")
+def monitoring() -> dict[str, Any]:
+    """Request counts, error rate and latency, plus the model metrics.
+
+    Two layers, because the judging criteria ask for both: is the application
+    healthy, and are the models still any good?
+    """
+    from pyshared.telemetry import telemetry
+
+    return {
+        "application": telemetry.snapshot(),
+        "models": {
+            name: {
+                "model": metrics.get("model"),
+                "label_sufficient": metrics.get("label_sufficient"),
+                "pr_auc": metrics.get("pr_auc"),
+                "roc_auc": metrics.get("roc_auc"),
+                "support": metrics.get("support"),
+            }
+            for name, metrics in state.context.metrics.items()
+        },
+        "data": state.context.summary(),
+    }
+
+
 @router.get("/kpis")
 def kpis() -> dict[str, Any]:
     """The headline numbers, computed on the stored plan."""

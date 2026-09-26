@@ -19,6 +19,7 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from pyshared.logging import get_logger
+from pyshared.telemetry import install as install_telemetry
 
 from trendwear.api.routes import router
 from trendwear.api.state import state
@@ -55,6 +56,7 @@ async def revalidate_static(request, call_next):
     return response
 
 
+install_telemetry(app)
 app.include_router(router)
 
 if SHARED_DIR.exists():

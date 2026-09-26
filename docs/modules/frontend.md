@@ -102,7 +102,7 @@ allocation logic.
 
 ---
 
-## The two PR1 screens (Task 14)
+## The two screens the demo turns on
 
 **Suppliers** (`/pages/suppliers.html`) — the comparison table. Every approved supplier with price, lead
 time, delivery record, capacity, minimum order and predicted risk, filterable by material, plant and origin,
@@ -138,3 +138,47 @@ read two numbers off a screen and subtract them in their head.
 - **Static files are served `no-cache, must-revalidate`.** A browser kept an edited module from its cache
   during development; the same thing on 28 September, with a judge's tab open while we push a fix, would look
   like the app was broken.
+
+---
+
+## All thirteen screens
+
+Six in SupplyGuard, seven in TrendWear Planner. Each one answers a question a
+planner would actually ask, and each states the provenance of what it shows.
+
+### SupplyGuard (PR1) — port 8001
+
+| Screen | Heading | What it answers |
+|---|---|---|
+| `/` | *Buy on total cost, not on price* | The cockpit: total cost, invoice, suppliers used, high-risk share, and the comparison against how they actually bought |
+| `/pages/suppliers.html` | *Who can supply this, and how well* | Every approved supplier with price, lead time, delivery record, capacity, MOQ and predicted risk |
+| `/pages/allocate.html` | *Move the weights, watch the plan move* | The plan itself, with every line's reason and the three baselines |
+| `/pages/risk-check.html` | *Check an order before it becomes a commitment* | Score one prospective order: delay, quality and disruption, with the reason in English |
+| `/pages/scenarios.html` | *Break the plan on purpose* | Five disruptions, each re-solved, each with its delta |
+| `/pages/models.html` | *Three risk targets. One supports a model.* | The bake-off, the baselines, and the sufficiency verdict per target |
+
+### TrendWear Planner (P2) — port 8002
+
+| Screen | Heading | What it answers |
+|---|---|---|
+| `/` | *One number the business commits to* | The cockpit: consensus, the gap in units and money, revenue, margin |
+| `/pages/reconcile.html` | *Three plans, one agreed number* | Merchandising against forecast against supply, the gap priced, the override |
+| `/pages/merchandising.html` | *What we expect to sell* | The forecast, its accuracy against baselines, and the cold-start method |
+| `/pages/production.html` | *What the plants can actually make* | Capacity use, shortfalls, the production lines, and the fabric orders beneath |
+| `/pages/logistics.html` | *Made is not the same as on sale* | DC-to-store lanes, lead times, and when units become available |
+| `/pages/inventory.html` | *The price of being wrong* | Safety stock, and the achieved service level from the backtest |
+| `/pages/markdown.html` | *Discount the ones that need it* | Recommendations by week and depth, with the elasticity labelled as assumed |
+
+The headings are deliberately sentences rather than nouns. "Three risk targets.
+One supports a model." tells a judge what the screen is *for* before they read a
+single number, and it commits us to the honest reading in the one place we cannot
+quietly drop it.
+
+### One rule across all of them
+
+**Nothing is shown without its provenance.** A generated supplier says generated. A
+figure from a product group rather than a supplier's own record carries a marker.
+An assumed elasticity says assumed. A model that failed its gate says so on the
+screen that reports it. That rule is why the front end has as much text on it as it
+does — and it is the reason we can point at a screen instead of confessing to a
+caveat.

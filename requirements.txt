@@ -9,4 +9,6 @@ pulp>=2.9,<3          # 4.x replaced the classic LpVariable API
 sqlalchemy>=2.0
 pydantic>=2.9
 joblib>=1.4
+pyarrow>=17          # pandas needs it for parquet; the planning cache is parquet
+scipy>=1.14           # safety-stock z-scores and the elasticity fit
 openpyxl>=3.1

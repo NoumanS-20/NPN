@@ -1,9 +1,12 @@
 # PR1 — supplier risk models
 
-**What it does.** Predicts whether an order will go wrong *before* the purchase order is released. The
-delay model is built; quality and disruption follow in Task 8.
+**What it does.** Predicts whether an order will go wrong *before* the purchase order is released, across
+three targets: delivery delay, quality events and supply disruption. One of the three supports a model; the
+section below the delay results is the evidence for why the other two do not.
 
-**Where it lives.** `apps/pr1/backend/supplyguard/risk/` — `base.py` (shared machinery), `delay.py`.
+**Where it lives.** `apps/pr1/backend/supplyguard/risk/` — `base.py` (shared machinery and the sufficiency
+gate), `delay.py`, `quality.py`, `disruption.py`, `small_label.py` (the observed-rate fallback) and
+`explain.py` (the per-order reason shown on the risk-check screen).
 
 **Why it matters.** The prediction does not sit in a report next to the plan. It enters the allocation
 objective, so a supplier likely to be late costs more in the optimiser and receives less volume. That link —

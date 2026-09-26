@@ -17,6 +17,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pyshared.logging import get_logger
+from pyshared.telemetry import install as install_telemetry
 
 from supplyguard.api.routes import router
 from supplyguard.api.state import state
@@ -71,6 +72,7 @@ async def revalidate_static(request, call_next):
     return response
 
 
+install_telemetry(app)
 app.include_router(router)
 
 # The shared modules are mounted before the app's own files, because the root

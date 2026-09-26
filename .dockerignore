@@ -1,0 +1,18 @@
+# The raw datasets are 212 MB and neither image needs them: the processed
+# tables and the fitted models are copied in instead.
+data/raw/
+data/interim/
+
+.git/
+.github/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+node_modules/
+docs/
+tests/
+scripts/
+.env
+*.md

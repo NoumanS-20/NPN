@@ -1,0 +1,134 @@
+# Deploy both applications to Hugging Face Spaces.
+#
+# Runs only after CI has passed on main, because pushing a Space that fails its
+# own tests is worse than not pushing at all. Also runnable by hand from the
+# Actions tab, which is what we use before the demo.
+#
+# Two repository secrets are needed:
+#   HF_TOKEN              a Hugging Face write token
+#   KAGGLE_ACCESS_TOKEN   to rebuild the processed tables, which are gitignored
+#
+# Without HF_TOKEN the job does not fail; it says what is missing and stops. A
+# red cross on the repository the week of the demo is a distraction we do not
+# need, and this workflow is a convenience — `scripts/stage_space.py` deploys
+# from a laptop in about two minutes.
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-spaces
+  cancel-in-progress: true
+
+jobs:
+  spaces:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Check for the deploy token
+        id: token
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          if [ -z "$HF_TOKEN" ]; then
+            echo "No HF_TOKEN secret set — nothing to deploy to. Add it in"
+            echo "Settings → Secrets and variables → Actions."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-python@v5
+        if: steps.token.outputs.ready == 'true'
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        if: steps.token.outputs.ready == 'true'
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install kaggle
+
+      # Same cache key as CI, so a normal deploy reuses the datasets CI fetched
+      # rather than pulling 212 MB again.
+      - name: Restore dataset cache
+        if: steps.token.outputs.ready == 'true'
+        id: data-cache
+        uses: actions/cache@v4
+        with:
+          path: data/raw
+          key: raw-data-${{ hashFiles('scripts/fetch_data.py') }}
+
+      - name: Fetch datasets
+        if: steps.token.outputs.ready == 'true' && steps.data-cache.outputs.cache-hit != 'true'
+        env:
+          KAGGLE_ACCESS_TOKEN: ${{ secrets.KAGGLE_ACCESS_TOKEN }}
+        run: |
+          if [ -z "$KAGGLE_ACCESS_TOKEN" ]; then
+            echo "::error::No KAGGLE_ACCESS_TOKEN and no cached data — cannot build the demo pack."
+            exit 1
+          fi
+          mkdir -p "$HOME/.kaggle"
+          printf '%s' "$KAGGLE_ACCESS_TOKEN" > "$HOME/.kaggle/access_token"
+          chmod 600 "$HOME/.kaggle/access_token"
+          python scripts/fetch_data.py
+
+      # The processed tables are gitignored on purpose, so they are rebuilt here.
+      # Every seed is pinned, so what this produces is what we rehearsed.
+      - name: Build the demo pack
+        if: steps.token.outputs.ready == 'true'
+        run: |
+          python scripts/build_demo_pack.py
+          python scripts/build_demo_pack.py --check
+
+      - name: Stage both Spaces
+        if: steps.token.outputs.ready == 'true'
+        run: |
+          python scripts/stage_space.py pr1 --force
+          python scripts/stage_space.py p2 --force
+
+      - name: Push to Hugging Face
+        if: steps.token.outputs.ready == 'true'
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          set -euo pipefail
+          git lfs install
+          git config --global user.email "deploy@vortex5.invalid"
+          git config --global user.name "Vortex5 deploy"
+
+          push() {
+            local dir="$1" repo="$2"
+            echo "::group::$repo"
+            cd "$dir"
+            git init -b main -q
+            git remote add origin "https://user:${HF_TOKEN}@huggingface.co/spaces/${repo}"
+            git add -A
+            git commit -qm "deploy ${GITHUB_SHA::7}"
+            # Force, because each run builds a fresh single-commit history. The
+            # Space is a deployment target, not a source of truth.
+            git push --force -q origin main
+            cd - > /dev/null
+            echo "::endgroup::"
+          }
+
+          push build/spaces/pr1 Nouman-20/supplyguard
+          push build/spaces/p2  Nouman-20/trendwear-planner
+
+      - name: Where to look
+        if: steps.token.outputs.ready == 'true'
+        run: |
+          echo "SupplyGuard  https://nouman-20-supplyguard.hf.space"
+          echo "TrendWear    https://nouman-20-trendwear-planner.hf.space"
+          echo "Each takes a few minutes to build, then 30-60 seconds to wake after idling."

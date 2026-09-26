@@ -189,6 +189,36 @@ def cycles() -> dict[str, Any]:
     }
 
 
+@router.get("/monitoring")
+def monitoring() -> dict[str, Any]:
+    """Request counts, error rate and latency, plus the model metrics."""
+    from pyshared.telemetry import telemetry
+
+    metrics = state.context.metrics
+    return {
+        "application": telemetry.snapshot(),
+        "models": {
+            "forecast": {
+                "wape": metrics["forecast"]["wape"],
+                "wape_seasonal_naive": metrics["forecast"]["wape_seasonal_naive"],
+                "beats_baseline": metrics["forecast"]["beats_seasonal_naive"],
+            },
+            "cold_start": {
+                "best_method": metrics["cold_start"].get("best_method"),
+                "beats_baseline": metrics["cold_start"].get("analog_beats_baseline"),
+            },
+            "safety_stock": {
+                "implied_service_level": metrics["safety_stock"]["implied_service_level"],
+            },
+            "elasticity": {
+                "value": metrics["elasticity"]["value"],
+                "source": metrics["elasticity"]["source"],
+            },
+        },
+        "data": state.context.summary(),
+    }
+
+
 @router.get("/kpis")
 def kpis() -> dict[str, Any]:
     return state.kpis()
