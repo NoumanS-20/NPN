@@ -20,8 +20,10 @@
           <h1>Check an order before it becomes a commitment</h1>
           <p>
             The use case asks for delivery delays to be predicted <em>before</em> the purchase order goes
-            out. Pick a supplier, a material and a quantity, and the model scores it — with the reasons,
-            so a buyer can weigh them against what they already know.
+            out. Two checks run here, and they answer different questions. The model scores the
+            <em>supplier</em> — will they deliver on time, judged from their record. Then the order is
+            checked against what that supplier can actually make in the quoted lead time, which is
+            arithmetic, not prediction. The worse of the two decides the verdict.
           </p>
         </div>
       </header>
@@ -56,7 +58,7 @@
       <section id="verdict"></section>
 
       <section class="panel">
-        <div class="panel__head"><h2>What drives the score</h2></div>
+        <div class="panel__head"><h2>What to weigh before releasing it</h2><span class="small muted">The supplier's record, and whether the order fits</span></div>
         <div class="panel__body" id="factors">
           <div class="empty">Score an order to see the reasoning.</div>
         </div>

@@ -17,7 +17,11 @@ async function load() {
 
     document.getElementById("log-stats").innerHTML = [
       stat("Units moving", units(summary.units ?? 0), `${summary.stores ?? 0} stores`),
-      stat("Distribution cost", money(summary.distribution_cost ?? 0), "across every lane"),
+      stat(
+        "Distribution cost",
+        money(summary.distribution_cost ?? 0),
+        "to move everything the plants make — the cockpit costs the committed plan, which is smaller",
+      ),
       stat("Average transit", days(summary.mean_transit_days ?? 0), "warehouse to shop floor"),
       stat("Slowest lane", days(summary.slowest_lane_days ?? 0), "the one that sets the date"),
     ].join("");

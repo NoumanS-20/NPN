@@ -29,7 +29,7 @@ about.
 
 **Differently.** Take σ from the forecast model's own residuals, or better, from
 quantile forecasts. And optimise the service level against the cost of a stockout
-rather than fixing it at 95% — a style with 58% margin and one with 20% do not
+rather than fixing it at 95% — a style with 54.6% margin and one with 20% do not
 deserve the same buffer.
 
 ---
@@ -53,7 +53,7 @@ capacity constraint with slack would have made every other screen less
 interesting and taught a panel nothing.
 
 **Zero shortfall, honestly.** The plan meets the *forecast* in full. It does not
-meet the *merchandising ambition* — that is the 100,618-unit gap in
+meet the *merchandising ambition* — that is the 99,686-unit gap in
 [p2-sop.md](p2-sop.md). Those are two different statements and it is worth being
 precise about which one this module makes.
 

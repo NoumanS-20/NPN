@@ -23,9 +23,9 @@ before anyone has to ask.
 | Delay model | random forest, **PR-AUC 0.347** vs 0.264 best baseline, ROC-AUC 0.825, precision 0.414, recall 0.375, threshold 0.415, on 2,581 held-out orders |
 | Quality model | **not sufficient** (PR-AUC 0.164 vs 0.256 baseline) → supplier observed rate |
 | Disruption model | **not sufficient** (ROC-AUC 0.482) → supplier observed rate |
-| Plan vs how they actually bought | **−26.9% total cost, −11.5% expected late units** |
-| Plan vs cheapest-first | +3.4% invoice, **−1.9 points** high-risk volume |
-| Solve time | 0.28–0.41 s one plant / two weeks (median 0.30 over 5 runs); 9.1 s all eight plants |
+| Plan vs how they actually bought | **−25.0% total cost, −12.4% expected late units** |
+| Plan vs cheapest-first | +6.4% invoice, **−1.3 points** high-risk volume |
+| Solve time | 0.28–0.41 s one plant / two weeks (median 0.30 over 5 runs); 7.9 s all eight plants |
 
 ### TrendWear Planner (P2)
 
@@ -36,9 +36,9 @@ before anyone has to ask.
 | Forecast | LightGBM, **WAPE 0.340** vs 0.445 seasonal naive, 0.3625 moving average |
 | Cold start | analogue method, **WAPE 0.378** vs 0.417 category average |
 | Safety stock | 95% planned, **96.8% achieved** over 2,722 style-weeks |
-| Reconciliation | merchandising 696k · forecast 600k · supply 652k · **gap 100,618 units = 5.57 M** · consensus 595,530 |
+| Reconciliation | merchandising 696k · forecast 600k · supply 652k · **gap 99,686 units = 5.56 M** · consensus 596,462 |
 | Merchandising ambition | **+16.1%** above the statistical forecast |
-| Financials | revenue 32.9 M, gross margin 19.1 M (58%), inventory 1.20 M, distribution 0.47 M |
+| Financials | revenue 32.9 M, gross margin 18.0 M (54.6%), inventory 1.26 M, distribution 0.47 M |
 | Markdown | 10 styles recommended, 159 k margin recovered, elasticity **−1.8 assumed** |
 | Production | peak capacity use 100%, zero shortfall, LP solves in 0.2 s |
 
@@ -99,12 +99,18 @@ also add conformal prediction intervals rather than point probabilities.
 **What.** Minimise material cost + expected shortage cost + expected rework cost,
 subject to: demand met in full, approved suppliers only, per-supplier-material-week
 capacity, lead time inside the horizon, minimum order quantity, at least two
-suppliers per material, no supplier above 40% of a material, and contract
-minimums. PuLP + CBC.
+suppliers per material, no supplier above 40% of a material, and both halves of
+each contract band — the ceiling and the **contracted minimum**. PuLP + CBC.
+
+Honouring the floors costs money: on a one-week slice it adds 8.1% to the plan
+and pulls in three more suppliers, because a commitment made last year does not
+care what this week's cheapest quote is. Where a slice cannot satisfy every
+floor at once, the plan is still returned and the message says the minimums were
+waived — the same escalation the concentration cap already uses.
 
 **Why.** Risk has to be in the objective in money, or it is a report rather than a
-decision. That single choice is why the plan pays 3.4% more on the invoice and
-carries 1.9 points less high-risk volume. The constraint families come from the
+decision. That single choice is why the plan pays 6.4% more on the invoice and
+carries 1.3 points less high-risk volume. The constraint families come from the
 mentor's written reply.
 
 **Differently.** OR-Tools CP-SAT if we needed changeover sequencing or a network
@@ -115,7 +121,7 @@ ten times this size.
 **What.** Three baselines, all solved and reported: cheapest-first, equal split,
 and the historical mix (how this organisation actually bought).
 
-**Why.** "Our optimiser saved 26.9%" means nothing without saying against what.
+**Why.** "Our optimiser saved 25.0%" means nothing without saying against what.
 Including the baseline that *beats* us on invoice price is the reason to believe
 the rest.
 
@@ -210,7 +216,7 @@ constrained supply — with the gap in units and money, and one agreed consensus
 number that can be lowered by hand but never raised above supply. Five stages,
 rolling monthly, versioned.
 
-**Why.** This is the use case. The gap is 100,618 units and 5.57 M, and the cap on
+**Why.** This is the use case. The gap is 99,686 units and 5.56 M, and the cap on
 the consensus is the discipline the meeting exists to enforce: a business can
 decide to sell less than the plants can make, never more.
 
@@ -282,7 +288,7 @@ than hide it.
 ### On the optimiser
 
 **"What makes this better than buying from the cheapest supplier?"**
-It costs 3.4% more on the invoice and 1.9 points less of the volume sits with
+It costs 6.4% more on the invoice and 1.3 points less of the volume sits with
 high-risk suppliers. Priced in expected shortage cost, the total is lower. And
 cheapest-first cannot satisfy "at least two suppliers per material" and a 40%
 concentration cap at the same time — it is not just worse, it is infeasible against
@@ -295,7 +301,7 @@ the build — contract ceilings at 5%, ceilings tighter than the cap, MOQs deriv
 from bulk shipment sizes, and network capacity compared against per-plant
 requirements — and fixed each at source rather than by loosening the model.
 
-**"Nine seconds for eight plants. Does that scale?"**
+**"Eight seconds for eight plants. Does that scale?"**
 Not to a real network, and we would not pretend it does. A few hundred plants and
 thousands of materials needs decomposition, warm starts, or OR-Tools CP-SAT. That
 is costed at 8 person-days in `docs/estimate-and-roadmap.md`.

@@ -203,3 +203,66 @@ def test_kpis_carry_the_headline_numbers(client: TestClient) -> None:
     assert body["vs_historical_invoice_pct"] < 0        # cheaper than the status quo
     assert body["plan_high_risk_share"] >= 0
     assert body["delay_model_roc_auc"] > 0.7
+
+
+@pytest.mark.requires_data
+def test_order_size_can_overrule_a_comfortable_delay_probability(client) -> None:
+    """The defect this guards: a 168x order reading "Safe to release".
+
+    The delay model scores the supplier, never the order, so a request far
+    beyond what a supplier can build in the lead time has to be caught by
+    arithmetic or not at all.
+    """
+    material = "Efavirenz 50mg, capsule, 30 Caps"
+    supplier = "pharmacy-direct--aurobindo-unit-iii-india"
+
+    small = client.post("/api/risk/score-po", json={
+        "supplier_id": supplier, "material_id": material, "quantity": 1,
+    }).json()
+    huge = client.post("/api/risk/score-po", json={
+        "supplier_id": supplier, "material_id": material, "quantity": 500_000,
+    }).json()
+
+    # Same supplier, so the model's view of them cannot have changed.
+    assert small["delay_probability"] == huge["delay_probability"]
+    # But the verdict must, because one of these orders is impossible.
+    assert huge["verdict"] == "high"
+    assert "more than the supplier can make" in huge["explanation"]
+
+
+@pytest.mark.requires_data
+def test_order_size_is_reported_as_a_multiple_not_a_runaway_percentage(client) -> None:
+    """'500000% of weekly output' is arithmetically true and useless to read."""
+    result = client.post("/api/risk/score-po", json={
+        "supplier_id": "pharmacy-direct--aurobindo-unit-iii-india",
+        "material_id": "Efavirenz 50mg, capsule, 30 Caps",
+        "quantity": 5000,
+    }).json()
+
+    factor = next(f for f in result["top_factors"] if "Order size" in f["factor"])
+    assert "x what this supplier can make" in factor["explanation"]
+    assert "lead time" in factor["explanation"]
+    # No percentage above 1000% should reach a screen.
+    for token in factor["explanation"].split():
+        if token.endswith("%"):
+            assert float(token.rstrip("%").replace(",", "")) <= 1000
+
+
+@pytest.mark.requires_data
+def test_the_verdict_still_clears_an_order_a_supplier_can_actually_make(client) -> None:
+    """The guard must not turn every order red, or it says nothing either."""
+    verdicts = set()
+    suppliers = client.get(
+        "/api/suppliers",
+        params={"material_id": "Efavirenz 600mg, tablets, 30 Tabs", "limit": 50},
+    ).json()["rows"]
+
+    for row in suppliers[:12]:
+        out = client.post("/api/risk/score-po", json={
+            "supplier_id": row["supplier_id"],
+            "material_id": "Efavirenz 600mg, tablets, 30 Tabs",
+            "quantity": 250,
+        }).json()
+        verdicts.add(out["verdict"])
+
+    assert "normal" in verdicts, "no order is ever releasable, so the check is useless"

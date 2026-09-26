@@ -48,7 +48,6 @@ FABRICS = (
 
 _ADJECTIVE = ("Harbour", "Meadow", "Atlas", "Solstice", "Corso", "Linden", "Brio", "Vale",
               "Anvil", "Quay", "Mistral", "Cinder", "Fable", "Noon", "Orchard", "Pike")
-_NOUN = ("Tee", "Shirt", "Dress", "Trouser", "Knit", "Jacket", "Overshirt", "Midi")
 
 
 def build_style_catalogue(
@@ -58,6 +57,9 @@ def build_style_catalogue(
 ) -> pd.DataFrame:
     """One row per style: what it is, when it launches, what it costs to make."""
     rng = np.random.default_rng(seed)
+    # Costs draw from their own stream so that fixing the margin does not
+    # shift every generated price and volume that came after it.
+    cost_rng = np.random.default_rng(seed + 11)
 
     real_ids = sorted(weekly["style_id"].unique())
     real_volume = weekly.groupby("style_id")["units"].mean()
@@ -66,9 +68,13 @@ def build_style_catalogue(
     rows: list[dict[str, object]] = []
 
     for index, style_id in enumerate(real_ids):
-        category, fabric_metres, _ = CATEGORIES[index % len(CATEGORIES)]
+        category, fabric_metres, cost_ratio = CATEGORIES[index % len(CATEGORIES)]
         fabric, fabric_price = FABRICS[index % len(FABRICS)]
         price = float(real_price.get(style_id, 50.0))
+        # A tee and a jacket do not carry the same margin, and two jackets do
+        # not carry the same margin either. A catalogue where every style
+        # returns exactly 58% is a catalogue nobody believes.
+        ratio = float(np.clip(cost_ratio * cost_rng.normal(1.0, 0.08), 0.25, 0.75))
         rows.append({
             "style_id": style_id,
             "name": f"{_ADJECTIVE[index % len(_ADJECTIVE)]} {category}",
@@ -76,7 +82,7 @@ def build_style_catalogue(
             "season": SEASONS[index % len(SEASONS)],
             "launch_week": (index // 3) * LAUNCH_CADENCE_WEEKS,
             "price": round(price, 2),
-            "cost": round(price * 0.42, 2),
+            "cost": round(price * ratio, 2),
             "fabric_id": fabric,
             "fabric_metres": fabric_metres,
             "fabric_price": fabric_price,
@@ -89,21 +95,23 @@ def build_style_catalogue(
     needed = max(n_styles - len(rows), 0)
     for index in range(needed):
         position = len(rows) + index
-        category, fabric_metres, _ = CATEGORIES[position % len(CATEGORIES)]
+        category, fabric_metres, cost_ratio = CATEGORIES[position % len(CATEGORIES)]
         fabric, fabric_price = FABRICS[position % len(FABRICS)]
+        ratio = float(np.clip(cost_ratio * cost_rng.normal(1.0, 0.08), 0.25, 0.75))
 
         price = float(rng.choice(real_price.to_numpy()) * rng.normal(1.0, 0.18))
         volume = float(rng.choice(real_volume.to_numpy()) * rng.normal(1.0, 0.30))
 
         rows.append({
             "style_id": f"GEN{index:04d}",
-            "name": f"{_ADJECTIVE[position % len(_ADJECTIVE)]} "
-                    f"{_NOUN[position % len(_NOUN)]}",
+            # The name has to agree with the category. "Harbour Tee" filed
+            # under Dress reads as a bug to anyone glancing at the screen.
+            "name": f"{_ADJECTIVE[position % len(_ADJECTIVE)]} {category}",
             "category": category,
             "season": SEASONS[position % len(SEASONS)],
             "launch_week": (position // 3) * LAUNCH_CADENCE_WEEKS,
             "price": round(max(price, 8.0), 2),
-            "cost": round(max(price, 8.0) * 0.42, 2),
+            "cost": round(max(price, 8.0) * ratio, 2),
             "fabric_id": fabric,
             "fabric_metres": fabric_metres,
             "fabric_price": fabric_price,

@@ -101,6 +101,14 @@ def _is_sufficient(metrics: dict[str, float | str]) -> tuple[bool, str]:
             "orders better than chance."
         )
     if gain < MIN_PR_AUC_GAIN:
+        # A model that scores below its baseline does not "beat it by -0.09".
+        # Reading that on screen invites the obvious question, so say which it is.
+        if gain < 0:
+            return False, (
+                f"PR-AUC {pr_auc:.3f} falls short of the best baseline ({best_baseline:.3f}) "
+                f"by {abs(gain):.3f}: the supplier's own history predicts this better than "
+                "the model does."
+            )
         return False, (
             f"PR-AUC {pr_auc:.3f} beats the best baseline ({best_baseline:.3f}) by only "
             f"{gain:.3f}, under the {MIN_PR_AUC_GAIN} we require to call the gain real."

@@ -23,11 +23,11 @@ Three numbers exist for every style and week, and they rarely agree:
 | **Constrained supply** | What the plants can actually make, after capacity and fabric lead times ([p2-planning.md](p2-planning.md)) | **652,062** units |
 
 **The gap between the first and the third is the conversation the cycle exists to
-have:** 100,618 units, **5.57 million** in revenue, across 34 styles that are
+have:** 99,686 units, **5.56 million** in revenue, across 34 styles that are
 short.
 
 The **consensus** is the single number the business commits to:
-**595,530 units**.
+**596,462 units**.
 
 ### The one rule enforced in code
 
@@ -81,20 +81,20 @@ financial number has not finished:
 
 | | |
 |---|---|
-| Revenue | 32,921,710 |
-| Cost of sales | 13,827,095 |
-| Gross margin | **19,094,616** (58%) |
-| Inventory value | 1,202,370 |
-| Distribution cost | 470,468 |
+| Revenue | 32,929,207 |
+| Cost of sales | 14,955,585 |
+| Gross margin | **17,973,622** (54.6%) |
+| Inventory value | 1,264,864 |
+| Distribution cost | 471,205 |
 | Lost sales value | 0 |
-| Contribution | 18,624,147 |
-| Units committed | 595,530 |
+| Contribution | 17,502,416 |
+| Units committed | 596,462 |
 
 Also reported by category, so the screen answers "where is the margin" and not
 only "how much".
 
 **Lost sales are zero**, and that needs saying rather than glossing: the plan meets
-the *forecast* in full. The 5.57 M gap is against merchandising *ambition*, which
+the *forecast* in full. The 5.56 M gap is against merchandising *ambition*, which
 is a different and larger number. Confusing the two would overstate the problem.
 
 ---
@@ -104,7 +104,7 @@ is a different and larger number. Confusing the two would overstate the problem.
 `distribution.py` covers the part of the use case that is easy to forget: **made is
 not the same as on sale**. DC-to-store lanes carry a lead time and a cost per unit,
 so a unit produced in week 6 is available to sell in week 7 or 8, and the
-distribution cost (470,468) lands in the financials.
+distribution cost (471,205) lands in the financials.
 
 ---
 

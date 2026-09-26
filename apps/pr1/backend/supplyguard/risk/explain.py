@@ -21,11 +21,41 @@ import pandas as pd
 _REVIEW_THRESHOLD = 0.25
 _HIGH_THRESHOLD = 0.40
 
+# An order beyond what a supplier can physically make in the quoted lead time is
+# a problem the delay model cannot see: the model scores the supplier, not the
+# size of what we are asking for. So capacity is checked separately, in
+# arithmetic, and it can overrule a comfortable probability.
+_STRAIN_REVIEW = 1.0
+_STRAIN_HIGH = 2.0
 
-def _verdict(probability: float) -> tuple[str, str]:
+
+def _format_multiple(ratio: float) -> str:
+    """Read a ratio the way a buyer would say it out loud."""
+    if ratio >= 2:
+        return f"{ratio:,.0f}x" if ratio >= 10 else f"{ratio:.1f}x"
+    return f"{ratio:.0%}"
+
+
+def _verdict(probability: float, strain: float | None = None) -> tuple[str, str]:
+    """Combine the model's view of the supplier with what they can actually make.
+
+    Two different questions, deliberately kept apart: "do they deliver late?" is
+    a prediction, "can they make this much in time?" is arithmetic. The worse of
+    the two decides, and the advice says which one spoke.
+    """
+    if strain is not None and strain >= _STRAIN_HIGH:
+        return "high", (
+            "Hold. This is more than the supplier can make in the quoted lead time, whatever "
+            "their delivery record says — split it across suppliers or move the date."
+        )
     if probability >= _HIGH_THRESHOLD:
         return "high", (
             "Hold for review. Consider splitting this order or bringing the date forward."
+        )
+    if strain is not None and strain >= _STRAIN_REVIEW:
+        return "elevated", (
+            "Releasable only if they can add capacity: this order uses all of their output "
+            "for the whole lead time, leaving no room for anything to go wrong."
         )
     if probability >= _REVIEW_THRESHOLD:
         return "elevated", "Releasable, but worth a buffer on the need-by date."
@@ -69,19 +99,27 @@ def explain_order_risk(
 
     if len(rows):
         offer = rows.iloc[0]
-        capacity = float(offer["capacity_per_week"])
-        utilisation = quantity / capacity if capacity else 0.0
+        weekly = float(offer["capacity_per_week"])
+        lead = float(offer["lead_days"])
+
+        # The window that matters for one purchase order is the lead time, not a
+        # calendar week. Comparing a whole order against a single week of output
+        # made every order look impossible, which is a way of saying nothing.
+        lead_weeks = max(lead / 7.0, 1.0)
+        buildable = weekly * lead_weeks
+        strain = quantity / buildable if buildable else float("inf")
+
         factors.append({
             "factor": "Order size against capacity",
-            "value": round(utilisation, 3),
-            "contribution": round(min(utilisation, 1.5) / 3, 4),
+            "value": round(strain, 3),
+            "contribution": round(min(strain, 3.0) / 3, 4),
             "explanation": (
-                f"{quantity:,.0f} units is {utilisation:.0%} of this supplier's usual weekly "
-                f"output for this material."
+                f"{quantity:,.0f} units is {_format_multiple(strain)} what this supplier can make "
+                f"in the {lead:.0f}-day lead time — about {buildable:,.0f} units at their usual "
+                f"rate of {weekly:,.0f} a week."
             ),
         })
 
-        lead = float(offer["lead_days"])
         factors.append({
             "factor": "Lead time",
             "value": round(lead, 1),
@@ -111,14 +149,18 @@ def explain_order_risk(
             ),
         })
 
-    level, advice = _verdict(delay_p)
+    strain = next(
+        (f["value"] for f in factors if f["factor"] == "Order size against capacity"), None
+    )
+    level, advice = _verdict(delay_p, strain)
     origin = str(supplier.get("origin", "real"))
     source = "measured from their own delivery record" if measured else "the population average"
 
     explanation = (
         f"{supplier.get('name', supplier['supplier_id'])} has a {delay_p:.0%} chance of delivering "
         f"this order late and a {quality_p:.0%} chance of a quality problem. The delay figure is "
-        f"{source}. {advice}"
+        f"{source} and scores the supplier, not the size of this order — order size is checked "
+        f"separately, below. {advice}"
     )
     if origin == "synthetic":
         explanation += " This is a generated supplier, included to make the comparison realistic."

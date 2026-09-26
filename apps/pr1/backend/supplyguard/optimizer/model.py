@@ -28,7 +28,11 @@ risk score beside a cost and guessing.
 3. **Minimum order quantity** — if a supplier is used at all, it receives at least
    its MOQ. This is what makes the problem integer rather than linear.
 4. **Contract bands** — each supplier's share over the horizon stays inside its
-   contracted minimum and maximum.
+   contracted minimum and maximum. The minimum is a commitment we already made,
+   so it binds even when a cheaper supplier is available; where it forces a
+   supplier in, their minimum order quantity applies too, and the larger of the
+   two is what they receive. If the floors cannot be met the relaxation ladder
+   waives contracts entirely and says so, rather than returning "infeasible".
 5. **Lead time** — a supplier is eligible for a week only if its risk-adjusted
    lead time fits. Applied as a filter, not a constraint, to keep the model small.
 6. **Concentration cap** — no supplier takes more than ``max_supplier_share`` of a
@@ -43,6 +47,7 @@ line by line in an interview.
 from __future__ import annotations
 
 import time
+from dataclasses import replace
 
 import pandas as pd
 import pulp
@@ -192,6 +197,7 @@ def solve(
     request: AllocationRequest,
     offers: pd.DataFrame,
     risk: pd.DataFrame | None = None,
+    _enforce_contract_floors: bool = True,
 ) -> AllocationResult:
     """Allocate every requirement across approved suppliers.
 
@@ -202,6 +208,10 @@ def solve(
     """
     request.validate()
     started = time.perf_counter()
+
+    # Held aside so the contract-floor retry below re-enters with the caller's
+    # own frame rather than one this call has already merged risk into.
+    original_offers = offers
 
     offers = offers.copy()
     if risk is not None and len(risk):
@@ -328,13 +338,62 @@ def solve(
             if not indices:
                 continue
             total = total_by_material.get(band["material_id"], 0.0)
+
             ceiling = float(band["contract_max_share"]) * total
             problem += (pulp.lpSum(quantity[i] for i in indices) <= ceiling, f"cmax_{band.name}")
+
+            # The floor is the half of a contract that costs money to honour: we
+            # committed to buy this much, so the optimiser has to, even where a
+            # cheaper supplier exists. Leaving it out made every plan look better
+            # than a real buyer could achieve.
+            #
+            # A floor above zero also forces the supplier's "used" flag on, which
+            # pulls in their minimum order quantity — so the binding figure is
+            # whichever of the two is larger. That is correct, and it is why the
+            # floors are checked against demand before they are trusted.
+            #
+            # The floor is a share of the material's volume, but a supplier only
+            # has variables where they are approved and their lead time fits. A
+            # floor larger than what they could physically deliver across those
+            # weeks is not a commitment, it is an infeasibility — so it is capped
+            # at their own addressable capacity before it becomes a constraint.
+            floor = float(band["contract_min_share"]) * total
+            if floor > 0:
+                weekly = float(band["capacity_per_week"])
+                deliverable = weekly * len({i[2] for i in indices})
+                floor = min(floor, deliverable)
+            if floor > 0 and _enforce_contract_floors:
+                problem += (
+                    pulp.lpSum(quantity[i] for i in indices) >= floor,
+                    f"cmin_{band.name}",
+                )
 
     problem += pulp.lpSum(objective_terms)
     problem.solve(pulp.PULP_CBC_CMD(msg=False))
 
     status = pulp.LpStatus[problem.status].lower()
+
+    # Contracted minimums are the one constraint that can make a slice
+    # unsatisfiable on its own: they force volume onto named suppliers, and a
+    # narrow slice may not have room for all of them at once. The existing
+    # ladder raises the concentration cap and waives ceilings; this is the same
+    # idea for the floors. Returning a plan that says which commitment it could
+    # not honour beats returning no plan at all — but it must never happen
+    # silently, so the message names it.
+    if status != "optimal" and _enforce_contract_floors:
+        fallback = solve(request, original_offers, risk, _enforce_contract_floors=False)
+        if fallback.status == "optimal":
+            note = (
+                "contracted minimums waived: this slice cannot honour every supplier's "
+                "contracted floor at once. The plan meets demand and every other "
+                "constraint; the floors are reported as unmet rather than dropped quietly."
+            )
+            return replace(
+                fallback,
+                message=f"{fallback.message}; {note}" if fallback.message else note,
+                solve_seconds=time.perf_counter() - started,
+            )
+
     if status != "optimal":
         return AllocationResult(
             lines=[], status="infeasible" if status == "infeasible" else status,

@@ -80,7 +80,8 @@ async function renderPlan() {
 
     mount.innerHTML = "";
     mount.append(splitLegend());
-    for (const [material, lines] of [...byRequirement].slice(0, PREVIEW_LINES)) {
+    const shown = [...byRequirement].slice(0, PREVIEW_LINES);
+    for (const [material, lines] of shown) {
       const total = lines.reduce((sum, line) => sum + line.qty, 0);
 
       const head = document.createElement("div");
@@ -94,6 +95,20 @@ async function renderPlan() {
 
       mount.append(head, bar);
       splitBar(bar, lines);
+    }
+
+    // The cockpit shows a handful of bars, not the plan. Saying so is the
+    // difference between a preview and a screen that quietly hides four
+    // materials — the allocation page makes the same disclosure.
+    const hidden = byRequirement.size - shown.length;
+    if (hidden > 0) {
+      const note = document.createElement("p");
+      note.className = "small muted";
+      note.style.marginTop = "var(--space-4)";
+      note.textContent =
+        `Showing ${shown.length} of ${byRequirement.size} materials in this plant-week. `
+        + `The planner has all ${byRequirement.size}.`;
+      mount.append(note);
     }
 
     if (plan.message) {

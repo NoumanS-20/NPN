@@ -105,7 +105,7 @@ async function renderMoney() {
       ["Cost of sales", money(totals.cost_of_sales)],
       ["Gross margin", `${money(totals.gross_margin)} (${pct(totals.margin_pct)})`],
       ["Inventory at cost", money(totals.inventory_value)],
-      ["Distribution", money(totals.distribution_cost)],
+      ["Distribution (on the committed plan)", money(totals.distribution_cost)],
       ["Contribution", money(totals.contribution)],
     ];
 

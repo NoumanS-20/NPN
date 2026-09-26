@@ -101,10 +101,10 @@ vortex5-scm/
            scenarios, models
 ```
 
-Measured, on the largest plant over two weeks: **26.9% lower total cost** than
-the way this organisation actually bought, **11.5% fewer expected late units**,
-and **1.9 points less volume** on high-risk suppliers than buying cheapest-first
-— for 3.4% more on the invoice. That last number is the point: the plan is
+Measured, on the largest plant over two weeks: **25.0% lower total cost** than
+the way this organisation actually bought, **12.4% fewer expected late units**,
+and **1.3 points less volume** on high-risk suppliers than buying cheapest-first
+— for 6.4% more on the invoice. That last number is the point: the plan is
 dearer on paper and cheaper in reality.
 
 ---
@@ -149,7 +149,7 @@ dearer on paper and cheaper in reality.
                          v
     sop/reconcile.py     three plans, one agreed number
       merchandising 696k   ·   forecast 600k   ·   supply 652k
-      gap 100,618 units = 5.57 M   ·   consensus 595,530 units
+      gap 99,686 units = 5.56 M   ·   consensus 596,462 units
       the consensus may be lowered by hand, never raised above supply
     sop/cycle.py         rolling monthly cycle, 5 stages, versioned
     sop/financials.py    revenue, margin, inventory, distribution cost
@@ -172,7 +172,7 @@ served by the same process, so there is no build step and nothing to go wrong
 between the code we wrote and the page a judge sees. Requests are timed by
 middleware, and `/api/monitoring` reports counts, error rate and p50/p95 latency
 per endpoint. A plan solves in about 0.3 seconds for a plant-week slice and
-about nine seconds for all eight plants at once.
+about eight seconds for all eight plants at once.
 
 ---
 

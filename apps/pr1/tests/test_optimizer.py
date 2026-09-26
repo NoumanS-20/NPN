@@ -236,3 +236,72 @@ def test_solves_a_full_size_problem_within_two_seconds() -> None:
     assert result.is_optimal
     assert result.solve_seconds < 2.0, f"solve took {result.solve_seconds}s"
     assert len(result.lines) > 100
+
+
+@pytest.mark.requires_data
+def test_contract_floors_never_make_a_real_slice_infeasible() -> None:
+    """The regression this guards cost the cockpit its numbers.
+
+    Contracted minimums force volume onto named suppliers. Added naively they
+    made the full eight-plant plan infeasible, and the KPI endpoint reported
+    zeros rather than failing loudly — so the first screen a judge sees went
+    blank. Every slice the UI can ask for must still come back with a plan.
+    """
+    from supplyguard.optimizer.model import solve
+    from supplyguard.optimizer.types import AllocationRequest, Requirement, Weights
+    from supplyguard.pipeline import load
+
+    context = load()
+    slices = {
+        "all plants, 1 week": context.requirements[context.requirements["week"] <= 1],
+        "all plants, 4 weeks": context.requirements[context.requirements["week"] <= 4],
+        "the whole plan": context.requirements,
+        "one plant, 2 weeks": context.requirements[
+            (context.requirements["plant_id"] == "plant-nigeria")
+            & (context.requirements["week"] <= 2)
+        ],
+    }
+
+    for label, rows in slices.items():
+        requirements = [
+            Requirement(r.material_id, r.plant_id, int(r.week), float(r.required_qty))
+            for r in rows.itertuples()
+        ]
+        result = solve(
+            AllocationRequest(requirements=requirements, weights=Weights(1, 1, 1)),
+            context.offers,
+            context.risk,
+        )
+        assert result.status == "optimal", f"{label} is {result.status}: {result.message}"
+        assert result.lines, f"{label} returned an empty plan"
+
+
+@pytest.mark.requires_data
+def test_honouring_contracts_costs_something_somewhere() -> None:
+    """A constraint that never changes any answer is not being applied."""
+    from supplyguard.optimizer.model import solve
+    from supplyguard.optimizer.types import AllocationRequest, Requirement, Weights
+    from supplyguard.pipeline import load
+
+    context = load()
+    rows = context.requirements[
+        (context.requirements["plant_id"] == "plant-nigeria")
+        & (context.requirements["week"] <= 1)
+    ]
+    requirements = [
+        Requirement(r.material_id, r.plant_id, int(r.week), float(r.required_qty))
+        for r in rows.itertuples()
+    ]
+
+    with_contracts = solve(
+        AllocationRequest(requirements=requirements, weights=Weights(1, 1, 1),
+                          honour_contracts=True),
+        context.offers, context.risk)
+    without = solve(
+        AllocationRequest(requirements=requirements, weights=Weights(1, 1, 1),
+                          honour_contracts=False),
+        context.offers, context.risk)
+
+    assert with_contracts.status == without.status == "optimal"
+    # Commitments cost money to honour; if they were free they were not enforced.
+    assert with_contracts.total_cost > without.total_cost

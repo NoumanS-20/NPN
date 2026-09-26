@@ -22,16 +22,16 @@ Everything below is measured, not aspirational. The sources are
 
 - **10,324 real purchase orders** (SCMS delivery history), 520 suppliers, 16
   materials, 8 plants, an 8-week horizon over 1.80 M units.
-- The plan costs **26.9% less in total** than the way this organisation actually
-  bought, with **11.5% fewer expected late units**.
-- Against buying cheapest-first it is **3.4% dearer on the invoice** and carries
-  **1.9 points less volume** with high-risk suppliers. That trade is the product.
+- The plan costs **25.0% less in total** than the way this organisation actually
+  bought, with **12.4% fewer expected late units**.
+- Against buying cheapest-first it is **6.4% dearer on the invoice** and carries
+  **1.3 points less volume** with high-risk suppliers. That trade is the product.
 - Delivery-delay model: random forest, **PR-AUC 0.347** against a 0.264 baseline,
   ROC-AUC 0.825, on 2,581 chronologically held-out orders.
 - Quality and disruption models **failed their sufficiency gate** (71 and 136
   positive labels), so the application falls back to each supplier's observed
   rate and says so on screen.
-- Solve time: about 0.3 s for one plant over two weeks, 9.1 s for all eight plants.
+- Solve time: about 0.3 s for one plant over two weeks, 7.9 s for all eight plants.
 - Four scenarios — supplier outage, demand spike, lead-time shock, price shock —
   each re-solved, not scaled.
 
@@ -45,9 +45,9 @@ Everything below is measured, not aspirational. The sources are
 - Safety stock planned at a 95% service level, **96.8% achieved** in a
   2,722-week backtest.
 - The reconciliation: merchandising wants 696k units, the forecast says 600k, the
-  plants can make 652k — a gap of **100,618 units worth 5.57 M**. The consensus
+  plants can make 652k — a gap of **99,686 units worth 5.56 M**. The consensus
   can be lowered by hand and never raised above supply.
-- Revenue 32.9 M, gross margin 19.1 M (58%), 10 styles recommended for markdown
+- Revenue 32.9 M, gross margin 18.0 M (54.6%), 10 styles recommended for markdown
   worth 159 k in recovered margin.
 - Production LP solves in 0.2 s at 100% peak capacity utilisation with zero
   shortfall.

@@ -15,8 +15,8 @@ MILP (PR1) and the production LP (P2).
 
 | Rejected | Why not |
 |---|---|
-| **Google OR-Tools** (CP-SAT) | Genuinely better: faster on integer problems and a nicer scheduling API. Rejected because CBC solves our largest instance — eight plants, eight weeks, 376 offers — in nine seconds, and one plant-week in 0.25. We do not need the speed, and PuLP's model reads like the algebra we wrote in the design document, which matters when four people have to explain it. If the model grew a changeover-sequencing constraint, we would move. |
-| **A greedy heuristic** (sort by risk-adjusted price, fill capacity) | We built it anyway — it is `baselines/cheapest_first`. It is 3.4% cheaper on the invoice and carries 1.9 points more high-risk volume, and it cannot honour "at least two suppliers per material" and a 40% concentration cap at the same time. Keeping it as the baseline is worth more than using it as the answer. |
+| **Google OR-Tools** (CP-SAT) | Genuinely better: faster on integer problems and a nicer scheduling API. Rejected because CBC solves our largest instance — eight plants, eight weeks, 376 offers — in about eight seconds, and one plant-week in about 0.3. We do not need the speed, and PuLP's model reads like the algebra we wrote in the design document, which matters when four people have to explain it. If the model grew a changeover-sequencing constraint, we would move. |
+| **A greedy heuristic** (sort by risk-adjusted price, fill capacity) | We built it anyway — it is `baselines/cheapest_first`. It is 6.4% cheaper on the invoice and carries 1.3 points more high-risk volume, and it cannot honour "at least two suppliers per material" and a 40% concentration cap at the same time. Keeping it as the baseline is worth more than using it as the answer. |
 | **scipy.optimize.linprog** | No integer variables, so no MOQ and no "supplier used" binary. That kills two of the six constraint families. |
 | **Gurobi / CPLEX** | Licensed. A hackathon prototype a judge cannot run is not a prototype. |
 

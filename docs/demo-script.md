@@ -23,7 +23,7 @@ Already open. Do not click anything yet.
 > costs 20% less in total than the way this organisation actually bought last
 > year, and 14% fewer units are expected to arrive late."
 
-Point at the tiles: **total cost 474,910 · invoice 280,442 · 59 suppliers used ·
+Point at the tiles: **total cost 477,455 · invoice 282,058 · 65 suppliers used ·
 1.6% of volume on high-risk suppliers**.
 
 > "The data underneath is 10,324 real purchase orders from a health-commodity
@@ -62,8 +62,8 @@ Now **set the risk weight to zero** and solve again.
 Set it back to 1.0 and solve once more, then scroll to the baseline comparison.
 
 > "Three baselines, all solved, all shown. Against how they actually bought:
-> 26.9% cheaper in total, 11.5% fewer expected late units. Against simply buying
-> cheapest-first: we are 3.4% *dearer* on the invoice, and carry 1.9 points less
+> 25.0% cheaper in total, 12.4% fewer expected late units. Against simply buying
+> cheapest-first: we are 6.4% *dearer* on the invoice, and carry 1.3 points less
 > high-risk volume. We show the baseline that beats us, because that is the number
 > that makes the rest believable."
 
@@ -104,8 +104,8 @@ Run **supplier outage**.
 > no shared models, no shared code. A test in the repository fails the build if
 > one imports the other."
 
-Point at the tiles: **consensus 595,530 units · gap 100,618 units worth 5.57
-million · revenue 32.9 M · margin 58%**.
+Point at the tiles: **consensus 596,462 units · gap 99,686 units worth 5.57
+million · revenue 32.9 M · margin 54.6%**.
 
 > "This is one monthly sales-and-operations planning cycle. The job is to turn
 > three disagreeing plans into one number the business commits to."
@@ -118,19 +118,30 @@ million · revenue 32.9 M · margin 58%**.
 
 Point at the three lines on the chart.
 
-> "The gap between what the buyers want and what the plants can make is 100,618
-> units — 5.57 million in revenue. That gap *is* the S&OP meeting."
+> "The gap between what the buyers want and what the plants can make is 99,686
+> units — 5.56 million in revenue. That gap *is* the S&OP meeting."
 
 Scroll to the biggest gaps table.
 
 > "Ordered by money, so the meeting knows which four styles to argue about."
 
-Now change a consensus number upward, deliberately.
+Now use the **Agree a number** panel at the top. It opens on the biggest
+shortfall that still has supply to cap against — Fable Tee, week 4, where supply
+can make 1,914. Type **5,742** (three times that) and press *Agree this number*.
 
-> "I will try to commit to more than supply allows. It caps me. A meeting can
-> decide to sell less than the plants can make; it cannot decide to sell more.
-> That discipline is the point of the cycle, so it is enforced in code, not in a
-> comment."
+> "I will try to commit to three times what the plants can make. Watch."
+
+The screen answers:
+
+> *"Capped at 1,914 — supply can only make that much. You asked for 5,742. A
+> meeting can commit to less than the plants can make, never more."*
+
+> "That discipline is the point of the cycle, so it is enforced in the API, not
+> in a comment — it holds however the endpoint is called."
+
+Then type **900** and press it again. This time it is accepted, the row's *Set
+by* column changes to `agreed`, and the AGREED tile at the top drops by exactly
+the difference. A meeting may always commit to less.
 
 ### 1:50 — Merchandising (`/pages/merchandising.html`)
 
@@ -190,7 +201,7 @@ Open `/api/monitoring`.
 
 | What breaks | What you do |
 |---|---|
-| A solve takes too long | Keep talking — the solve time prints when it lands. If over ten seconds, cancel, narrow to one plant and two weeks, and say the full network is nine seconds. |
+| A solve takes too long | Keep talking — the solve time prints when it lands. If over ten seconds, cancel, narrow to one plant and two weeks, and say the full network is about eight seconds. |
 | A screen is blank, API fine | Ctrl+Shift+R. Both apps send no-cache headers on front-end paths, so this is rare. |
 | A server has died | The other tab still works. Restart in a terminal (`uvicorn ... --port 8001`); it is back in fifteen seconds. Fill the time with the Models screen on the other app. |
 | "Infeasible" | Say what it is: the constraint set is tight for that slice. Narrow it, re-solve, and point out the relaxation ladder reports whatever it waives. Do not click the same button twice hoping. |

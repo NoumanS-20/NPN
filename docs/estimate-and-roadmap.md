@@ -94,7 +94,7 @@ skip, and the estimates assume a team already fluent in the company's stack.
 | **Retraining pipeline and model registry** | 12 | Scheduled retraining, the sufficiency gate run automatically, versioned artifacts, and the ability to roll back a model. |
 | **Drift monitoring and alerting** | 8 | Input drift, prediction drift, and an alert when the delay model's live precision falls below what we published. |
 | **Approval workflow and audit** | 10 | Who proposed, who approved, what changed, when. Non-negotiable in procurement. |
-| **Scale and performance work** | 8 | Our MILP is nine seconds on eight plants. A real network is hundreds of plants and thousands of materials; that needs decomposition, warm starts, or OR-Tools. |
+| **Scale and performance work** | 8 | Our MILP is about eight seconds on eight plants. A real network is hundreds of plants and thousands of materials; that needs decomposition, warm starts, or OR-Tools. |
 | **Hardening, logging, error handling, runbooks** | 8 | |
 | **User testing with real planners** | 10 | The screens were designed for a demo. Real planners will want different defaults, bulk edits, and exports. |
 | **Security review and penetration test** | 6 | |
