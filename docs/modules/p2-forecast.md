@@ -19,7 +19,7 @@ Trained on 2,031 style-weeks to **2023-08-21**, tested on 371 style-weeks from
 | Method | WAPE | Reading |
 |---|---|---|
 | **LightGBM** (chosen) | **0.340** | |
-| Moving average (4 weeks) | 0.363 | A planner's spreadsheet |
+| Moving average (4 weeks) | 0.3625 | A planner's spreadsheet |
 | Seasonal naive (52 weeks) | 0.445 | The standard published baseline |
 
 Also: MAPE 0.560, bias **+2.6%**, MAE 475 units.
@@ -104,7 +104,7 @@ over one that would have needed a download during a demo.
 
 - **Quantile forecasts** rather than a point forecast, so safety stock uses the
   model's own uncertainty instead of historical sigma
-  ([p2-inventory.md](p2-inventory.md) makes the same point from the other side).
+  ([p2-planning.md](p2-planning.md) makes the same point from the other side).
 - Leave-one-style-out cold-start evaluation across all 20 real styles.
 - Weight training rows by `observations`, which the ETL already carries.
 - Reconcile the forecast hierarchically (style, category, total) so the aggregate

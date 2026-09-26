@@ -94,7 +94,7 @@ matter as much as the middleware:
 
 | Operation | Time |
 |---|---|
-| Supplier allocation, one plant / two weeks | **0.25 s** |
+| Supplier allocation, one plant / two weeks | **0.30 s** (0.28–0.41 over 5 runs) |
 | Supplier allocation, all eight plants | **9.1 s** |
 | Production LP, 3 plants / 13 weeks | **0.2 s** |
 | Cockpit KPIs | **0.03 s** (was 7.9 s before warming at startup) |

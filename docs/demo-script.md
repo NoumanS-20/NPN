@@ -45,7 +45,7 @@ Click a column header to sort by risk. Let them see it sort.
 
 Pick **plant-nigeria**, two weeks, balanced weights. Solve.
 
-> "One month's buy for the largest plant. Solved in a quarter of a second, and
+> "One month's buy for the largest plant. Solved in about a third of a second, and
 > every line says why that supplier was chosen."
 
 Read one line aloud — they are all like this:

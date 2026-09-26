@@ -25,7 +25,7 @@ before anyone has to ask.
 | Disruption model | **not sufficient** (ROC-AUC 0.482) → supplier observed rate |
 | Plan vs how they actually bought | **−26.9% total cost, −11.5% expected late units** |
 | Plan vs cheapest-first | +3.4% invoice, **−1.9 points** high-risk volume |
-| Solve time | 0.25 s one plant / two weeks; 9.1 s all eight plants |
+| Solve time | 0.28–0.41 s one plant / two weeks (median 0.30 over 5 runs); 9.1 s all eight plants |
 
 ### TrendWear Planner (P2)
 
@@ -33,7 +33,7 @@ before anyone has to ask.
 |---|---|
 | Styles | 60 — 20 from the data, 40 generated |
 | History | 106 weeks, 5 stores, 3 plants, 6 fabrics |
-| Forecast | LightGBM, **WAPE 0.340** vs 0.445 seasonal naive, 0.363 moving average |
+| Forecast | LightGBM, **WAPE 0.340** vs 0.445 seasonal naive, 0.3625 moving average |
 | Cold start | analogue method, **WAPE 0.378** vs 0.417 category average |
 | Safety stock | 95% planned, **96.8% achieved** over 2,722 style-weeks |
 | Reconciliation | merchandising 696k · forecast 600k · supply 652k · **gap 100,618 units = 5.57 M** · consensus 595,530 |

@@ -172,7 +172,7 @@ code appears in an API module. The front end is plain HTML, CSS and ES modules
 served by the same process, so there is no build step and nothing to go wrong
 between the code we wrote and the page a judge sees. Requests are timed by
 middleware, and `/api/monitoring` reports counts, error rate and p50/p95 latency
-per endpoint. A plan solves in about 0.25 seconds for a plant-week slice and
+per endpoint. A plan solves in about 0.3 seconds for a plant-week slice and
 about nine seconds for all eight plants at once.
 
 ---

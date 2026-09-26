@@ -53,7 +53,7 @@ otherwise would have been the single worst thing in this project.
 ## 3. Demand forecast: LightGBM
 
 **Chosen.** LightGBM on lag and rolling features, WAPE **0.340** against 0.445
-for seasonal naive and 0.363 for a moving average.
+for seasonal naive and 0.3625 for a moving average.
 
 | Rejected | Why not |
 |---|---|
@@ -142,7 +142,7 @@ Face hosted inference available behind a key for the free-text summaries.
 |---|---|
 | **A local LLM** (Llama, Mistral via llama.cpp) | The build machine has 8 GB of RAM and an RTX 3050. A 7B model would make the demo slow and the container enormous. |
 | **An LLM in the decision path** | Rejected on principle. A number a judge sees must come from the optimiser or the model, not from a language model's paraphrase of one. The narrative explains the plan; it never produces it. |
-| **OpenAI / Anthropic APIs** | A key we would have to fund and rotate, and a network dependency in a demo we decided must work offline. |
+| **Commercial hosted LLM APIs** | A key we would have to fund and rotate, and a network dependency in a demo we decided must work offline. |
 
 ---
 
