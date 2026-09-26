@@ -35,8 +35,13 @@ ENV PYTHONPATH=/app/packages:/app/apps/p2/backend
 
 EXPOSE 7860
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=40s \
-    CMD python -c "import urllib.request;urllib.request.urlopen('http://127.0.0.1:7860/api/health')"
+# The probe has to follow the same $PORT the CMD does. Hardcoding 7860 made the
+# container report itself unhealthy forever on any host that injects a port,
+# which reads as "build succeeded, deploy failed" and says nothing about why.
+# start-period is 90s because startup loads the planning cache and warms the
+# headline figures before it can answer anything.
+HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=3 \
+    CMD python -c "import os,urllib.request;urllib.request.urlopen('http://127.0.0.1:'+os.environ.get('PORT','7860')+'/api/health')"
 
 # Shell form on purpose: Cloud Run injects its own $PORT and the exec form
 # would pass the literal string. 7860 stays the default, so the same image

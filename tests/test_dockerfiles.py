@@ -59,6 +59,21 @@ def test_each_container_honours_an_injected_port() -> None:
         assert not cmd.strip().startswith("["), f"{app} uses exec form, so $PORT will not expand"
 
 
+def test_the_healthcheck_probes_the_same_port_the_app_listens_on() -> None:
+    """A probe on a fixed port fails forever wherever the port is injected.
+
+    Render and Cloud Run both set $PORT. When the probe ignored it, the build
+    succeeded and the deploy failed, with nothing in the log saying which of the
+    two was actually wrong.
+    """
+    for app, path in DOCKERFILES.items():
+        text = path.read_text(encoding="utf-8")
+        probe = [line for line in text.splitlines() if "urlopen" in line]
+        assert probe, f"{app} has no healthcheck probe"
+        assert "PORT" in probe[0], f"{app} probes a hardcoded port"
+        assert "127.0.0.1:7860/api/health" not in text, f"{app} still hardcodes 7860"
+
+
 def test_each_container_runs_the_right_application() -> None:
     assert "supplyguard.main:app" in DOCKERFILES["pr1"].read_text(encoding="utf-8")
     assert "trendwear.main:app" in DOCKERFILES["p2"].read_text(encoding="utf-8")
