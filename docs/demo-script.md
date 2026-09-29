@@ -126,15 +126,18 @@ Scroll to the biggest gaps table.
 > "Ordered by money, so the meeting knows which four styles to argue about."
 
 Now use the **Agree a number** panel at the top. It opens on the biggest
-shortfall that still has supply to cap against — Fable Tee, week 4, where supply
-can make 1,914. Type **5,742** (three times that) and press *Agree this number*.
+shortfall that still has supply to cap against — Fable Tee, week 4. The field
+beside the input says what supply can make; type roughly **three times that
+number** and press *Agree this number*.
 
 > "I will try to commit to three times what the plants can make. Watch."
 
 The screen answers:
 
-> *"Capped at 1,914 — supply can only make that much. You asked for 5,742. A
+> *"Capped at 1,843 — supply can only make that much. You asked for 5,529. A
 > meeting can commit to less than the plants can make, never more."*
+>
+> (the exact figures follow whatever the screen shows on the day)
 
 > "That discipline is the point of the cycle, so it is enforced in the API, not
 > in a comment — it holds however the endpoint is called."

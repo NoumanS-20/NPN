@@ -31,7 +31,9 @@ async function renderKpis() {
       stat(
         "Total cost of the plan",
         money(kpis.plan_total_cost),
-        `${units(kpis.plan_invoice)} invoice · ${kpis.suppliers_used} suppliers`,
+        // money(), not units(): this is a currency figure sitting directly under
+        // another currency figure, and formatting them differently reads as a bug.
+        `${money(kpis.plan_invoice)} invoice · ${kpis.suppliers_used} suppliers`,
       ),
       stat(
         "Against last year's buying",

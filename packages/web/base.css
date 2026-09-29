@@ -409,9 +409,13 @@ button.primary:hover:not(:disabled) { filter: brightness(1.08); }
 .split__seg[data-risk="low"] { background: var(--risk-low); }
 .split__seg[data-risk="medium"] { background: var(--risk-medium); }
 .split__seg[data-risk="high"] { background: var(--risk-high); }
+/* Generated suppliers keep their risk colour and gain stripes: colour carries
+   risk, texture carries provenance, and the two stay independent. At 0.16 the
+   stripes were invisible on a projector, so the legend entry looked like a
+   fourth risk band rather than a different kind of thing. */
 .split__seg[data-origin="synthetic"] {
   background-image: repeating-linear-gradient(
-    135deg, rgba(255, 255, 255, 0.16) 0 6px, transparent 6px 12px
+    135deg, rgba(255, 255, 255, 0.34) 0 5px, transparent 5px 10px
   );
 }
 
@@ -436,6 +440,19 @@ button.primary:hover:not(:disabled) { filter: brightness(1.08); }
 .swatch--low { background: var(--risk-low); }
 .swatch--medium { background: var(--risk-medium); }
 .swatch--high { background: var(--risk-high); }
+
+/* Generated data is not a fourth risk level - a generated supplier can be low
+   risk - so it carries its own colour and a texture rather than a place on the
+   ramp. It previously reused the low-risk grey, which made two legend entries
+   indistinguishable at 10px. */
+.swatch--generated {
+  background-color: var(--generated);   /* deliberately off the risk ramp */
+  background-image: repeating-linear-gradient(
+    135deg, rgba(255, 255, 255, 0.75) 0 2px, transparent 2px 5px
+  );
+  outline: 1px solid var(--generated);
+  outline-offset: -1px;
+}
 
 /* ---------- States ---------- */
 
@@ -473,6 +490,14 @@ button.primary:hover:not(:disabled) { filter: brightness(1.08); }
   color: var(--ink);
   font-size: var(--text-sm);
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+/* .note is amber because it means "something was relaxed or could not be
+   solved". A caveat about how we measured something is not a malfunction, so it
+   must not be coloured like one - this has to come after .note to win. */
+.note--method {
+  border-left-color: var(--info);
+  background: var(--info-soft);
 }
 
 .chart-box { position: relative; height: 280px; }

@@ -35,6 +35,18 @@
   --accent-soft: #eef2f9;
   --accent-ink: #ffffff;
 
+  /* Method notes. A caveat about how we measured something is not a warning that
+     something is wrong, so it must not borrow the amber from the risk ramp.
+     Teal reads as "read this" rather than "be careful". */
+  --info: #2a6b74;
+  --info-soft: #e8f2f3;
+
+  /* Generated data. An orthogonal dimension to risk - a generated supplier can be
+     low risk - so it gets its own neutral colour plus a texture, never a risk
+     colour. Reusing the low-risk grey here made two legend entries identical. */
+  --generated: #6b5b8a;
+  --generated-soft: #f0edf5;
+
   /* Risk ramp. Deliberately not the accent: reliability is not branding. */
   --risk-low: #64748b;
   --risk-medium: #c2872b;
@@ -102,6 +114,11 @@
     --accent-soft: #1a2436;
     --accent-ink: #0f1216;
 
+    --info: #6fb3bd;
+    --info-soft: #14262a;
+    --generated: #a394c4;
+    --generated-soft: #201c2b;
+
     --risk-low: #94a3b8;
     --risk-medium: #dda94e;
     --risk-high: #d4705e;
@@ -131,6 +148,11 @@
   --accent: #7ba0e0;
   --accent-soft: #1a2436;
   --accent-ink: #0f1216;
+  --info: #6fb3bd;
+  --info-soft: #14262a;
+  --generated: #a394c4;
+  --generated-soft: #201c2b;
+
   --risk-low: #94a3b8;
   --risk-medium: #dda94e;
   --risk-high: #d4705e;

@@ -171,7 +171,7 @@ export function splitLegend() {
     <span><i class="swatch swatch--low"></i> Delay risk under 25%</span>
     <span><i class="swatch swatch--medium"></i> 25–40%</span>
     <span><i class="swatch swatch--high"></i> Over 40%</span>
-    <span><i class="swatch swatch--low" style="background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.4) 0 4px,transparent 4px 8px)"></i> Generated supplier</span>
+    <span><i class="swatch swatch--generated"></i> Generated supplier</span>
   `;
   return element;
 }

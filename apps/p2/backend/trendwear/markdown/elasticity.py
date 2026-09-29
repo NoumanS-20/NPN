@@ -98,7 +98,7 @@ def fit(weekly: pd.DataFrame, category: str | None = None) -> Elasticity:
             r_squared=round(r_squared, 4),
             observations=len(data),
             reason=(
-                f"the fitted response explains only {r_squared:.1%} of the variation "
+                f"The fitted response explains only {r_squared:.1%} of the variation "
                 f"(slope {slope:.2f}), so it is too weak to plan with. Using the published "
                 f"apparel elasticity of {ASSUMED_ELASTICITY}, stated in the assumptions."
             ),

@@ -105,7 +105,7 @@ function renderModel(key, metrics) {
         ${badge}
       </div>
       <div class="panel__body">
-        <p class="${shipped ? "small muted" : "note"}" style="margin-bottom:var(--space-4)">
+        <p class="${shipped ? "small muted" : "note note--method"}" style="margin-bottom:var(--space-4)">
           ${metrics.sufficiency_reason}
         </p>
 

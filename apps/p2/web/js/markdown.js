@@ -32,7 +32,7 @@ async function load() {
 
     const measured = elasticity.source === "measured";
     document.getElementById("md-elasticity").innerHTML = `
-      <div class="${measured ? "" : "note"}" style="margin-bottom: var(--space-4)">
+      <div class="${measured ? "" : "note note--method"}" style="margin-bottom: var(--space-4)">
         <strong>${measured ? "Measured from the data" : "Assumed, and labelled as such"}:</strong>
         elasticity ${elasticity.value}. ${elasticity.reason}
       </div>

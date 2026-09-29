@@ -73,12 +73,12 @@
     "status": "optimal",
     "lost_sales_units": 0.0,
     "lost_sales_value": 0.0,
-    "solve_seconds": 0.2
+    "solve_seconds": 0.359
   },
   "elasticity": {
     "value": -1.8,
     "source": "assumed",
     "r_squared": 0.0,
-    "reason": "the fitted response explains only 0.0% of the variation (slope 0.04), so it is too weak to plan with. Using the published apparel elasticity of -1.8, stated in the assumptions."
+    "reason": "The fitted response explains only 0.0% of the variation (slope 0.04), so it is too weak to plan with. Using the published apparel elasticity of -1.8, stated in the assumptions."
   }
 }
